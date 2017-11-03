@@ -36,11 +36,11 @@ class SliceInfo(Extension):
     def __init__(self):
         super().__init__()
         Application.getInstance().getOutputDeviceManager().writeStarted.connect(self._onWriteStarted)
-        Preferences.getInstance().addPreference("info/send_slice_info", True)
+        Preferences.getInstance().addPreference("info/send_slice_info", False)
         Preferences.getInstance().addPreference("info/asked_send_slice_info", False)
 
         if not Preferences.getInstance().getValue("info/asked_send_slice_info"):
-            self.send_slice_info_message = Message(catalog.i18nc("@info", "Cura collects anonymised slicing statistics. You can disable this in the preferences."),
+            self.send_slice_info_message = Message(catalog.i18nc("@info", "Cura may optionally collect anonymised slicing statistics. You can enable this feature in the preferences."),
                                                    lifetime = 0,
                                                    dismissable = False,
                                                    title = catalog.i18nc("@info:title", "Collecting Data"))
