@@ -39,7 +39,8 @@ find_package(PythonInterp 3.5.0 REQUIRED)
 install(DIRECTORY resources
         DESTINATION ${CMAKE_INSTALL_DATADIR}/cura)
 install(DIRECTORY plugins
-        DESTINATION lib/cura)
+        DESTINATION lib/cura
+        PATTERN plugins/SliceInfoPlugin EXCLUDE)
 if(NOT APPLE AND NOT WIN32)
     install(FILES cura_app.py
             DESTINATION ${CMAKE_INSTALL_BINDIR}
