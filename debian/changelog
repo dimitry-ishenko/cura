@@ -1,9 +1,13 @@
-cura (3.0.3-1) UNRELEASED; urgency=medium
+cura (3.0.3-1) unstable; urgency=medium
 
   * New upstream release: 3.0.3
   * Upstream license change from AGPL-3+ to LGPL-3+
+  * Added uranium to build deps for the unit tests
+  * Added patch to remove hard dependency on python 3.5
+  * Added upstream patch to fix failing tests with Uranium 3.0.3
+  * Adapted Python3 check to require 3.5, but accept later versions
 
- -- Gregor Riepl <onitake@gmail.com>  Wed, 01 Nov 2017 01:02:01 +0100
+ -- Gregor Riepl <onitake@gmail.com>  Sun, 17 Dec 2017 06:02:38 +0000
 
 cura (2.5.0-1) unstable; urgency=medium
 
