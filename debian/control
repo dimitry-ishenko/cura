@@ -10,7 +10,7 @@ Build-Depends: cmake (>=2.8.12),
                python3-pytest,
                python3-uranium (>=3.0.3),
                uranium-tools (>=3.0.3)
-Standards-Version: 4.1.1
+Standards-Version: 4.1.2
 X-Python3-Version: >= 3.4
 Section: misc
 Homepage: https://github.com/Ultimaker/Cura
