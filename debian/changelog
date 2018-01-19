@@ -1,3 +1,9 @@
+cura (3.1.0-1) unstable; urgency=medium
+
+  * New upstream release 3.1.0
+
+ -- Gregor Riepl <onitake@gmail.com>  Fri, 19 Jan 2018 19:40:35 +0100
+
 cura (3.0.3-2) unstable; urgency=medium
 
   * Team upload.
