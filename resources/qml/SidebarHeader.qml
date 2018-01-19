@@ -14,7 +14,7 @@ Column
 {
     id: base;
 
-    property int currentExtruderIndex: ExtruderManager.activeExtruderIndex;
+    property int currentExtruderIndex: Cura.ExtruderManager.activeExtruderIndex;
     property bool currentExtruderVisible: extrudersList.visible;
 
     spacing: Math.floor(UM.Theme.getSize("sidebar_margin").width * 0.9)
@@ -31,20 +31,6 @@ Column
         }
         visible: extruderSelectionRow.visible
         height: UM.Theme.getSize("default_lining").height
-        width: height
-    }
-
-    Item
-    {
-        anchors
-        {
-            left: parent.left
-            leftMargin: UM.Theme.getSize("sidebar_margin").width
-            right: parent.right
-            rightMargin: UM.Theme.getSize("sidebar_margin").width
-        }
-        visible: extruderSelectionRow.visible
-        height: UM.Theme.getSize("default_lining").hieght
         width: height
     }
 
@@ -107,7 +93,7 @@ Column
                 onClicked:
                 {
                     forceActiveFocus() // Changing focus applies the currently-being-typed values so it can change the displayed setting values.
-                    ExtruderManager.setActiveExtruderIndex(index);
+                    Cura.ExtruderManager.setActiveExtruderIndex(index);
                 }
 
                 style: ButtonStyle
@@ -259,42 +245,36 @@ Column
             color: UM.Theme.getColor("text");
         }
 
-        ToolButton {
+        ToolButton
+        {
             id: materialSelection
+
             text: Cura.MachineManager.activeMaterialName
             tooltip: Cura.MachineManager.activeMaterialName
             visible: Cura.MachineManager.hasMaterials
-            property var valueError:
-            {
-                var data = Cura.ContainerManager.getContainerMetaDataEntry(Cura.MachineManager.activeMaterialId, "compatible")
-                if(data == "False")
-                {
-                    return true
-                }
-                else
-                {
-                    return false
-                }
-
-            }
-            property var valueWarning: ! Cura.MachineManager.isActiveQualitySupported
-
             enabled: !extrudersList.visible || base.currentExtruderIndex  > -1
-
             height: UM.Theme.getSize("setting_control").height
             width: parent.width * 0.7 + UM.Theme.getSize("sidebar_margin").width
             anchors.right: parent.right
             style: UM.Theme.styles.sidebar_header_button
             activeFocusOnPress: true;
+            menu: MaterialMenu {
+                extruderIndex: base.currentExtruderIndex
+            }
 
-            menu: MaterialMenu { extruderIndex: base.currentExtruderIndex }
+            property var valueError: !isMaterialSupported()
+            property var valueWarning: ! Cura.MachineManager.isActiveQualitySupported
+
+            function isMaterialSupported () {
+                return Cura.ContainerManager.getContainerMetaDataEntry(Cura.MachineManager.activeMaterialId, "compatible") == "True"
+            }
         }
     }
 
-    // Print core row
+    //Variant row
     Item
     {
-        id: printCoreRow
+        id: variantRow
         height: UM.Theme.getSize("sidebar_setup").height
         visible: Cura.MachineManager.hasVariants && !sidebar.monitoringPrint && !sidebar.hideSettings
 
@@ -308,7 +288,7 @@ Column
 
         Label
         {
-            id: printCoreLabel
+            id: variantLabel
             text: Cura.MachineManager.activeDefinitionVariantsName;
             width: Math.floor(parent.width * 0.45 - UM.Theme.getSize("default_margin").width)
             font: UM.Theme.getFont("default");
@@ -316,7 +296,7 @@ Column
         }
 
         ToolButton {
-            id: printCoreSelection
+            id: variantSelection
             text: Cura.MachineManager.activeVariantName
             tooltip: Cura.MachineManager.activeVariantName;
             visible: Cura.MachineManager.hasVariants
@@ -366,7 +346,7 @@ Column
             Label {
                 id: materialInfoLabel
                 wrapMode: Text.WordWrap
-                text: catalog.i18nc("@label", "<a href='%1'>Check material compatibility</a>")
+                text: catalog.i18nc("@label", "<a href='%1'>Check compatibility</a>")
                 font: UM.Theme.getFont("default")
                 color: UM.Theme.getColor("text")
                 linkColor: UM.Theme.getColor("text_link")
