@@ -13,5 +13,5 @@ Description: Fonts should be packaged separately.
 +        DESTINATION ${CMAKE_INSTALL_DATADIR}/cura
 +        PATTERN resources/themes/cura-light/fonts EXCLUDE)
  install(DIRECTORY plugins
-         DESTINATION lib/cura)
+         DESTINATION lib${LIB_SUFFIX}/cura)
  if(NOT APPLE AND NOT WIN32)
