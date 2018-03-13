@@ -1,3 +1,9 @@
+cura (3.2.1-1) UNRELEASED; urgency=medium
+
+  * New upstream version 3.2.1
+
+ -- Gregor Riepl <onitake@gmail.com>  Tue, 13 Mar 2018 23:10:04 +0100
+
 cura (3.1.0-1) unstable; urgency=medium
 
   * New upstream release 3.1.0
