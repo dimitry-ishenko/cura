@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Ultimaker B.V.
+# Copyright (c) 2018 Ultimaker B.V.
 # Cura is released under the terms of the LGPLv3 or higher.
 
 from cura.Settings.ExtruderManager import ExtruderManager
@@ -73,6 +73,11 @@ class BuildVolume(SceneNode):
         self._adhesion_type = None
         self._platform = Platform(self)
 
+        self._build_volume_message = Message(catalog.i18nc("@info:status",
+            "The build volume height has been reduced due to the value of the"
+            " \"Print Sequence\" setting to prevent the gantry from colliding"
+            " with printed models."), title = catalog.i18nc("@info:title", "Build Volume"))
+
         self._global_container_stack = None
         Application.getInstance().globalContainerStackChanged.connect(self._onStackChanged)
         self._onStackChanged()
@@ -95,11 +100,6 @@ class BuildVolume(SceneNode):
         self._setting_change_timer.setInterval(150)
         self._setting_change_timer.setSingleShot(True)
         self._setting_change_timer.timeout.connect(self._onSettingChangeTimerFinished)
-
-        self._build_volume_message = Message(catalog.i18nc("@info:status",
-            "The build volume height has been reduced due to the value of the"
-            " \"Print Sequence\" setting to prevent the gantry from colliding"
-            " with printed models."), title = catalog.i18nc("@info:title","Build Volume"))
 
         # Must be after setting _build_volume_message, apparently that is used in getMachineManager.
         # activeQualityChanged is always emitted after setActiveVariant, setActiveMaterial and setActiveQuality.
@@ -513,14 +513,13 @@ class BuildVolume(SceneNode):
         update_disallowed_areas = False
         update_raft_thickness = False
         update_extra_z_clearance = True
+
         for setting_key in self._changed_settings_since_last_rebuild:
+
             if setting_key == "print_sequence":
                 machine_height = self._global_container_stack.getProperty("machine_height", "value")
-                if Application.getInstance().getGlobalContainerStack().getProperty("print_sequence",
-                                                                                   "value") == "one_at_a_time" and len(
-                        self._scene_objects) > 1:
-                    self._height = min(self._global_container_stack.getProperty("gantry_height", "value"),
-                                       machine_height)
+                if Application.getInstance().getGlobalContainerStack().getProperty("print_sequence", "value") == "one_at_a_time" and len(self._scene_objects) > 1:
+                    self._height = min(self._global_container_stack.getProperty("gantry_height", "value"), machine_height)
                     if self._height < machine_height:
                         self._build_volume_message.show()
                     else:
@@ -528,9 +527,20 @@ class BuildVolume(SceneNode):
                 else:
                     self._height = self._global_container_stack.getProperty("machine_height", "value")
                     self._build_volume_message.hide()
+                update_disallowed_areas = True
                 rebuild_me = True
 
-            if setting_key in self._skirt_settings or setting_key in self._prime_settings or setting_key in self._tower_settings or setting_key == "print_sequence" or setting_key in self._ooze_shield_settings or setting_key in self._distance_settings or setting_key in self._extruder_settings:
+            # sometimes the machine size or shape settings are adjusted on the active machine, we should reflect this
+            if setting_key in self._machine_settings:
+                self._height = self._global_container_stack.getProperty("machine_height", "value")
+                self._width = self._global_container_stack.getProperty("machine_width", "value")
+                self._depth = self._global_container_stack.getProperty("machine_depth", "value")
+                self._shape = self._global_container_stack.getProperty("machine_shape", "value")
+                update_extra_z_clearance = True
+                update_disallowed_areas = True
+                rebuild_me = True
+
+            if setting_key in self._skirt_settings + self._prime_settings + self._tower_settings + self._ooze_shield_settings + self._distance_settings + self._extruder_settings:
                 update_disallowed_areas = True
                 rebuild_me = True
 
@@ -969,6 +979,7 @@ class BuildVolume(SceneNode):
     def _clamp(self, value, min_value, max_value):
         return max(min(value, max_value), min_value)
 
+    _machine_settings = ["machine_width", "machine_depth", "machine_height", "machine_shape", "machine_center_is_zero"]
     _skirt_settings = ["adhesion_type", "skirt_gap", "skirt_line_count", "skirt_brim_line_width", "brim_width", "brim_line_count", "raft_margin", "draft_shield_enabled", "draft_shield_dist", "initial_layer_line_width_factor"]
     _raft_settings = ["adhesion_type", "raft_base_thickness", "raft_interface_thickness", "raft_surface_layers", "raft_surface_thickness", "raft_airgap", "layer_0_z_overlap"]
     _extra_z_settings = ["retraction_hop_enabled", "retraction_hop"]
