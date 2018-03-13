@@ -31,7 +31,7 @@ Depends: cura-engine (>=1:3.2.1), cura-engine (<<1:3.3),
          qml-module-qtqml-models2,
          qml-module-qtquick-controls,
          qml-module-qtquick-dialogs,
-         uranium-plugins (=3.2.1),
+         uranium-plugins (>=3.2.1), uranium-plugins (<<3.3),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends}
