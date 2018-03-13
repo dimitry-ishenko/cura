@@ -18,7 +18,6 @@ Item
     property bool printerConnected: Cura.MachineManager.printerOutputDevices.length != 0
     property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
     property real progress: printerConnected ? Cura.MachineManager.printerOutputDevices[0].progress : 0
-    property int backendState: UM.Backend.state
 
     property bool showProgress: {
         // determine if we need to show the progress bar + percentage
@@ -180,7 +179,7 @@ Item
         width: parent.width - 2 * UM.Theme.getSize("sidebar_margin").width;
         height: UM.Theme.getSize("progressbar").height;
         anchors.top: statusLabel.bottom;
-        anchors.topMargin: UM.Theme.getSize("sidebar_margin").height / 4;
+        anchors.topMargin: Math.round(UM.Theme.getSize("sidebar_margin").height / 4);
         anchors.left: parent.left;
         anchors.leftMargin: UM.Theme.getSize("sidebar_margin").width;
     }
@@ -199,14 +198,19 @@ Item
             spacing: UM.Theme.getSize("default_margin").width
         }
 
+        Component.onCompleted: {
+            buttonsRow.updateAdditionalComponents("monitorButtons")
+        }
+
         Connections {
-            target: Printer
-            onAdditionalComponentsChanged:
-            {
-                if(areaId == "monitorButtons") {
-                    for (var component in CuraApplication.additionalComponents["monitorButtons"]) {
-                        CuraApplication.additionalComponents["monitorButtons"][component].parent = additionalComponentsRow
-                    }
+            target: CuraApplication
+            onAdditionalComponentsChanged: buttonsRow.updateAdditionalComponents("monitorButtons")
+        }
+
+        function updateAdditionalComponents (areaId) {
+            if(areaId == "monitorButtons") {
+                for (var component in CuraApplication.additionalComponents["monitorButtons"]) {
+                    CuraApplication.additionalComponents["monitorButtons"][component].parent = additionalComponentsRow
                 }
             }
         }

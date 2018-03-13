@@ -114,7 +114,7 @@ Cura.MachineAction
 
             Column
             {
-                width: Math.floor(parent.width * 0.5)
+                width: Math.round(parent.width * 0.5)
                 spacing: UM.Theme.getSize("default_margin").height
 
                 ScrollView
@@ -198,7 +198,7 @@ Cura.MachineAction
             }
             Column
             {
-                width: Math.floor(parent.width * 0.5)
+                width: Math.round(parent.width * 0.5)
                 visible: base.selectedPrinter ? true : false
                 spacing: UM.Theme.getSize("default_margin").height
                 Label
@@ -216,13 +216,13 @@ Cura.MachineAction
                     columns: 2
                     Label
                     {
-                        width: Math.floor(parent.width * 0.5)
+                        width: Math.round(parent.width * 0.5)
                         wrapMode: Text.WordWrap
                         text: catalog.i18nc("@label", "Type")
                     }
                     Label
                     {
-                        width: Math.floor(parent.width * 0.5)
+                        width: Math.round(parent.width * 0.5)
                         wrapMode: Text.WordWrap
                         text:
                         {
@@ -230,13 +230,13 @@ Cura.MachineAction
                             {
                                 if(base.selectedPrinter.printerType == "ultimaker3")
                                 {
-                                    return catalog.i18nc("@label", "Ultimaker 3")
+                                    return catalog.i18nc("@label Printer name", "Ultimaker 3")
                                 } else if(base.selectedPrinter.printerType == "ultimaker3_extended")
                                 {
-                                    return catalog.i18nc("@label", "Ultimaker 3 Extended")
+                                    return catalog.i18nc("@label Printer name", "Ultimaker 3 Extended")
                                 } else
                                 {
-                                    return catalog.i18nc("@label", "Unknown") // We have no idea what type it is. Should not happen 'in the field'
+                                    return catalog.i18nc("@label Printer name", "Unknown") // We have no idea what type it is. Should not happen 'in the field'
                                 }
                             }
                             else
@@ -247,25 +247,25 @@ Cura.MachineAction
                     }
                     Label
                     {
-                        width: Math.floor(parent.width * 0.5)
+                        width: Math.round(parent.width * 0.5)
                         wrapMode: Text.WordWrap
                         text: catalog.i18nc("@label", "Firmware version")
                     }
                     Label
                     {
-                        width: Math.floor(parent.width * 0.5)
+                        width: Math.round(parent.width * 0.5)
                         wrapMode: Text.WordWrap
                         text: base.selectedPrinter ? base.selectedPrinter.firmwareVersion : ""
                     }
                     Label
                     {
-                        width: Math.floor(parent.width * 0.5)
+                        width: Math.round(parent.width * 0.5)
                         wrapMode: Text.WordWrap
                         text: catalog.i18nc("@label", "Address")
                     }
                     Label
                     {
-                        width: Math.floor(parent.width * 0.5)
+                        width: Math.round(parent.width * 0.5)
                         wrapMode: Text.WordWrap
                         text: base.selectedPrinter ? base.selectedPrinter.ipAddress : ""
                     }
