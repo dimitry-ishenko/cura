@@ -1,10 +1,10 @@
-cura (3.2.1-1) UNRELEASED; urgency=medium
+cura (3.2.1-1) unstable; urgency=medium
 
   * New upstream version 3.2.1
   * Cura now asks if anonymous slicing data should be collected.
     Closes: #884709
 
- -- Gregor Riepl <onitake@gmail.com>  Tue, 13 Mar 2018 23:10:04 +0100
+ -- Gregor Riepl <onitake@gmail.com>  Fri, 16 Mar 2018 09:02:17 +0100
 
 cura (3.1.0-1) unstable; urgency=medium
 
