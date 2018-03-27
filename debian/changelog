@@ -1,9 +1,9 @@
-cura (3.2.1-2) UNRELEASED; urgency=medium
+cura (3.2.1-2) unstable; urgency=medium
 
   * Made fdm-materials a required dependency to avoid crash on startup.
     Closes: #894190
 
- -- Gregor Riepl <onitake@gmail.com>  Tue, 27 Mar 2018 18:50:48 +0200
+ -- Gregor Riepl <onitake@gmail.com>  Tue, 27 Mar 2018 19:02:45 +0200
 
 cura (3.2.1-1) unstable; urgency=medium
 
