@@ -1,17 +1,12 @@
-cura (3.2.1-2) unstable; urgency=medium
-
-  * Made fdm-materials a required dependency to avoid crash on startup.
-    Closes: #894190
-
- -- Gregor Riepl <onitake@gmail.com>  Tue, 27 Mar 2018 19:02:45 +0200
-
 cura (3.2.1-1) unstable; urgency=medium
 
   * New upstream version 3.2.1
   * Cura now asks if anonymous slicing data should be collected.
     Closes: #884709
+  * Made fdm-materials a required dependency to avoid crash on startup.
+    Closes: #894190
 
- -- Gregor Riepl <onitake@gmail.com>  Fri, 16 Mar 2018 09:02:17 +0100
+ -- Gregor Riepl <onitake@gmail.com>  Tue, 27 Mar 2018 19:02:45 +0200
 
 cura (3.1.0-1) unstable; urgency=medium
 
