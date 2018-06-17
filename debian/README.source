@@ -12,12 +12,7 @@ Packaging instructions (1 and 2 only need to be done once):
   $ gbp clone ssh://git.debian.org/git/3dprinter/packages/cura.git
   $ cd cura
 
-2.  Add the upstream repository and fetch the tree:
-
-  $ git remote add upstream https://github.com/Ultimaker/Cura.git
-  $ git fetch --all
-
-3.  Import the latest upstream release:
+2.  Import the latest upstream release:
 
   $ git fetch --all
   $ gbp import-orig --uscan
@@ -25,9 +20,9 @@ Packaging instructions (1 and 2 only need to be done once):
   This will fetch the latest upstream release into the upstream branch
   and create and commit a pristine-tar from it.
 
-4.  Update the changelog:
+3.  Update the changelog:
 
-  $ dch -a -v <UPSTREAM_VERSION>-<DEBIAN_VERSION>
+  $ dch -v <UPSTREAM_VERSION>-<DEBIAN_VERSION>
 
   Replace UPSTREAM_VERSION with the version fetched in step 3 and
   DEBIAN_VERSION with 1. If you are creating a new Debian release
@@ -35,7 +30,7 @@ Packaging instructions (1 and 2 only need to be done once):
   This will open a text editor where you can edit the changelog entry.
   Include a "Closes #..." entry if this release fixes a Debian bug.
 
-5.  Refresh and verify the patches:
+4.  Refresh and verify the patches:
 
   $ quilt push -a
 
@@ -46,20 +41,21 @@ Packaging instructions (1 and 2 only need to be done once):
 
   $ quilt pop -a; rm -rf .pc
 
-6.  Build against the upstream tree:
+5.  Build against the upstream tree:
 
   $ gbp buildpackage -us -uc
 
-7.  Verify that you don't have any lintian warnings:
+6.  Verify that you don't have any lintian warnings:
 
   $ linitian -I
 
-8.  Merge your changes back into the debian tree, tag and push everything:
+7.  Merge your changes back into the debian tree, tag and push everything:
 
   $ gbp buildpackage --git-tag --git-sign-tags
-  $ git push --tags origin master upstream pristine-tar
+  $ git push origin master upstream pristine-tar
+  $ git push --tags origin
 
-9.  Sign your package and release using dput or whichever method you prefer:
+8.  Sign your package and release using dput or whichever method you prefer:
 
   $ debsign
-  $ dput <RELEASE_REPOSITORY> ../libarcus_<VERSION>.changes
+  $ dput <RELEASE_REPOSITORY> ../cura_<VERSION>.changes
