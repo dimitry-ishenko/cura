@@ -1,8 +1,8 @@
 // Copyright (c) 2017 Ultimaker B.V.
 // Cura is released under the terms of the LGPLv3 or higher.
 
-import QtQuick 2.8
-import QtQuick.Controls 2.1
+import QtQuick 2.7
+import QtQuick.Controls 2.0
 
 import UM 1.1 as UM
 
@@ -13,11 +13,17 @@ SettingItem
 
     property string textBeforeEdit
     property bool textHasChanged
+    property bool focusGainedByClick: false
     onFocusReceived:
     {
         textHasChanged = false;
         textBeforeEdit = focusItem.text;
-        focusItem.selectAll();
+
+        if(!focusGainedByClick)
+        {
+            // select all text when tabbing through fields (but not when selecting a field with the mouse)
+            focusItem.selectAll();
+        }
     }
 
     contents: Rectangle
@@ -83,21 +89,14 @@ SettingItem
 
         Label
         {
-            anchors.right: parent.right;
+            anchors.right: parent.right
             anchors.rightMargin: Math.round(UM.Theme.getSize("setting_unit_margin").width)
-            anchors.verticalCenter: parent.verticalCenter;
+            anchors.verticalCenter: parent.verticalCenter
 
-            text: definition.unit;
+            text: definition.unit
+            renderType: Text.NativeRendering
             color: UM.Theme.getColor("setting_unit")
             font: UM.Theme.getFont("default")
-        }
-
-        MouseArea
-        {
-            id: mouseArea
-            anchors.fill: parent;
-            //hoverEnabled: true;
-            cursorShape: Qt.IBeamCursor
         }
 
         TextInput
@@ -141,6 +140,7 @@ SettingItem
                 {
                     base.focusReceived();
                 }
+                base.focusGainedByClick = false;
             }
 
             color: !enabled ? UM.Theme.getColor("setting_control_disabled_text") : UM.Theme.getColor("setting_control_text")
@@ -176,6 +176,22 @@ SettingItem
                     }
                 }
                 when: !input.activeFocus
+            }
+
+            MouseArea
+            {
+                id: mouseArea
+                anchors.fill: parent;
+
+                cursorShape: Qt.IBeamCursor
+
+                onPressed: {
+                    if(!input.activeFocus) {
+                        base.focusGainedByClick = true;
+                        input.forceActiveFocus();
+                    }
+                    mouse.accepted = false;
+                }
             }
         }
     }

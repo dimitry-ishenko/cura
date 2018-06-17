@@ -1,13 +1,14 @@
 // Copyright (c) 2017 Ultimaker B.V.
 // Cura is released under the terms of the LGPLv3 or higher.
 
-import QtQuick 2.8
-import QtQuick.Controls 2.1
+import QtQuick 2.7
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
 import UM 1.2 as UM
 import Cura 1.0 as Cura
 import "Menus"
+import "Menus/ConfigurationMenu"
 
 Rectangle
 {
@@ -18,7 +19,8 @@ Rectangle
     property bool hideView: Cura.MachineManager.activeMachineName == ""
 
     // Is there an output device for this printer?
-    property bool printerConnected: Cura.MachineManager.printerOutputDevices.length != 0
+    property bool isNetworkPrinter: Cura.MachineManager.activeMachineNetworkKey != ""
+    property bool printerConnected: Cura.MachineManager.printerConnected
     property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
     property var connectedPrinter: Cura.MachineManager.printerOutputDevices.length >= 1 ? Cura.MachineManager.printerOutputDevices[0] : null
 
@@ -64,11 +66,11 @@ Rectangle
 
     function getPrettyTime(time)
     {
-        var hours = Math.round(time / 3600)
+        var hours = Math.floor(time / 3600)
         time -= hours * 3600
-        var minutes = Math.round(time / 60);
+        var minutes = Math.floor(time / 60);
         time -= minutes * 60
-        var seconds = Math.round(time);
+        var seconds = Math.floor(time);
 
         var finalTime = strPadLeft(hours, "0", 2) + ':' + strPadLeft(minutes,'0',2)+ ':' + strPadLeft(seconds,'0',2);
         return finalTime;
@@ -85,12 +87,34 @@ Rectangle
         }
     }
 
-    MachineSelection {
+    MachineSelection
+    {
         id: machineSelection
-        width: base.width
+        width: base.width - configSelection.width - separator.width
+        height: UM.Theme.getSize("sidebar_header").height
+        anchors.top: base.top
+        anchors.left: parent.left
+    }
+
+    Rectangle
+    {
+        id: separator
+        visible: configSelection.visible
+        width: visible ? Math.round(UM.Theme.getSize("sidebar_lining_thin").height / 2) : 0
+        height: UM.Theme.getSize("sidebar_header").height
+        color: UM.Theme.getColor("sidebar_lining_thin")
+        anchors.left: machineSelection.right
+    }
+
+    ConfigurationSelection
+    {
+        id: configSelection
+        visible: isNetworkPrinter && printerConnected
+        width: visible ? Math.round(base.width * 0.15) : 0
         height: UM.Theme.getSize("sidebar_header").height
         anchors.top: base.top
         anchors.right: parent.right
+        panelWidth: base.width
     }
 
     SidebarHeader {
@@ -126,6 +150,7 @@ Rectangle
     {
         id: settingsModeLabel
         text: !hideSettings ? catalog.i18nc("@label:listbox", "Print Setup") : catalog.i18nc("@label:listbox", "Print Setup disabled\nG-code files cannot be modified")
+        renderType: Text.NativeRendering
         anchors.left: parent.left
         anchors.leftMargin: UM.Theme.getSize("sidebar_margin").width
         anchors.top: hideSettings ? machineSelection.bottom : headerSeparator.bottom
@@ -207,12 +232,13 @@ Rectangle
                     color: (control.checked || control.pressed) ? UM.Theme.getColor("action_button_active") : control.hovered ? UM.Theme.getColor("action_button_hovered") : UM.Theme.getColor("action_button")
                 }
 
-                contentItem: Text
+                contentItem: Label
                 {
                     text: model.text
                     font: UM.Theme.getFont("default")
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
+                    renderType: Text.NativeRendering
                     elide: Text.ElideRight
                     color:
                     {
@@ -352,6 +378,7 @@ Rectangle
             font: UM.Theme.getFont("large")
             color: UM.Theme.getColor("text_subtext")
             text: (!base.printDuration || !base.printDuration.valid) ? catalog.i18nc("@label Hours and minutes", "00h 00min") : base.printDuration.getDisplayString(UM.DurationFormat.Short)
+            renderType: Text.NativeRendering
 
             MouseArea
             {
@@ -479,6 +506,7 @@ Rectangle
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             font: UM.Theme.getFont("very_small")
+            renderType: Text.NativeRendering
             color: UM.Theme.getColor("text_subtext")
             elide: Text.ElideMiddle
             width: parent.width
@@ -511,15 +539,12 @@ Rectangle
                     weights = ["0"];
                     costs = ["0.00"];
                 }
+                var result = lengths.join(" + ") + "m / ~ " + weights.join(" + ") + "g";
                 if(someCostsKnown)
                 {
-                    return catalog.i18nc("@label Print estimates: m for meters, g for grams, %4 is currency and %3 is print cost", "%1m / ~ %2g / ~ %4 %3").arg(lengths.join(" + "))
-                            .arg(weights.join(" + ")).arg(costs.join(" + ")).arg(UM.Preferences.getValue("cura/currency"));
+                    result += " / ~ " + costs.join(" + ") + " " + UM.Preferences.getValue("cura/currency");
                 }
-                else
-                {
-                    return catalog.i18nc("@label Print estimates: m for meters, g for grams", "%1m / ~ %2g").arg(lengths.join(" + ")).arg(weights.join(" + "));
-                }
+                return result;
             }
             MouseArea
             {
