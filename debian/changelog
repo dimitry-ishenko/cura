@@ -1,10 +1,10 @@
-cura (3.3.0-1) UNRELEASED; urgency=medium
+cura (3.3.0-1) unstable; urgency=medium
 
   * New upstream version 3.3.0
   * Migrated to salsa
   * Fixed appstream XML
 
- -- Gregor Riepl <onitake@gmail.com>  Sun, 17 Jun 2018 14:27:22 +0200
+ -- Gregor Riepl <onitake@gmail.com>  Sun, 17 Jun 2018 18:41:14 +0200
 
 cura (3.2.1-1) unstable; urgency=medium
 
