@@ -1,6 +1,7 @@
 cura (3.3.1-2) UNRELEASED; urgency=medium
 
-  * Added missing dependency: qml-module-qtquick-controls2
+  * Added missing dependency: qml-module-qtquick-controls2.
+    Closes: #903463
 
  -- Gregor Riepl <onitake@gmail.com>  Tue, 10 Jul 2018 18:55:00 +0200
 
