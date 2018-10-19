@@ -21,8 +21,8 @@ Package: cura
 Architecture: all
 Depends: cura-engine (>=1:3.3.0), cura-engine (<<1:3.4),
          fonts-open-sans,
-         python3-pyqt5,
-         python3-pyqt5.qtopengl,
+         python3-pyqt5 (>=5.10),
+         python3-pyqt5.qtopengl (>=5.10),
          python3-savitar (>=3.3.0),
          python3-serial,
          python3-uranium (>=3.3.0), python3-uranium (<<3.4),

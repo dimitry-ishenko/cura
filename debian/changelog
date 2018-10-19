@@ -1,3 +1,10 @@
+cura (3.3.1-3) UNRELEASED; urgency=medium
+
+  * Require at least PyQt 5.10 to address upstream bug
+    https://github.com/Ultimaker/Cura/issues/4080
+
+ -- Gregor Riepl <onitake@gmail.com>  Fri, 19 Oct 2018 08:34:40 +0200
+
 cura (3.3.1-2) unstable; urgency=medium
 
   * Added missing dependency: qml-module-qtquick-controls2.
