@@ -1,49 +1,64 @@
-# Copyright (c) 2018 Ultimaker B.V.
+# Copyright (c) 2019 Ultimaker B.V.
 # Cura is released under the terms of the LGPLv3 or higher.
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
-from collections import OrderedDict
-
+from UM.ConfigurationErrorMessage import ConfigurationErrorMessage
+from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Logger import Logger
 from UM.Settings.InstanceContainer import InstanceContainer
 
 
-##
-# A metadata / container combination. Use getContainer() to get the container corresponding to the metadata.
+##  A node in the container tree. It represents one container.
 #
-# ContainerNode is a multi-purpose class. It has two main purposes:
-#  1. It encapsulates an InstanceContainer. It contains that InstanceContainer's
-#          - metadata (Always)
-#          - container (lazy-loaded when needed)
-#  2. It also serves as a node in a hierarchical InstanceContainer lookup table/tree.
-#     This is used in Variant, Material, and Quality Managers.
-#
+#   The container it represents is referenced by its container_id. During normal
+#   use of the tree, this container is not constructed. Only when parts of the
+#   tree need to get loaded in the container stack should it get constructed.
 class ContainerNode:
-    __slots__ = ("metadata", "container", "children_map")
+    ##  Creates a new node for the container tree.
+    #   \param container_id The ID of the container that this node should
+    #   represent.
+    def __init__(self, container_id: str) -> None:
+        self.container_id = container_id
+        self._container = None  # type: Optional[InstanceContainer]
+        self.children_map = {}  # type: Dict[str, ContainerNode]  # Mapping from container ID to container node.
 
-    def __init__(self, metadata: Optional[dict] = None):
-        self.metadata = metadata
-        self.container = None
-        self.children_map = OrderedDict()
+    ##  Gets the metadata of the container that this node represents.
+    #   Getting the metadata from the container directly is about 10x as fast.
+    #   \return The metadata of the container in this node.
+    def getMetadata(self):
+        return ContainerRegistry.getInstance().findContainersMetadata(id = self.container_id)[0]
 
-    def getChildNode(self, child_key: str) -> Optional["ContainerNode"]:
-        return self.children_map.get(child_key)
+    ##  Get an entry from the metadata of the container that this node contains.
+    #
+    #   This is just a convenience function.
+    #   \param entry The metadata entry key to return.
+    #   \param default If the metadata is not present or the container is not
+    #   found, the value of this default is returned.
+    #   \return The value of the metadata entry, or the default if it was not
+    #   present.
+    def getMetaDataEntry(self, entry: str, default: Any = None) -> Any:
+        container_metadata = ContainerRegistry.getInstance().findContainersMetadata(id = self.container_id)
+        if len(container_metadata) == 0:
+            return default
+        return container_metadata[0].get(entry, default)
 
-    def getContainer(self) -> "InstanceContainer":
-        if self.metadata is None:
-            raise RuntimeError("Cannot get container for a ContainerNode without metadata")
-
-        if self.container is None:
-            container_id = self.metadata["id"]
-            Logger.log("i", "Lazy-loading container [%s]", container_id)
-            from UM.Settings.ContainerRegistry import ContainerRegistry
-            container_list = ContainerRegistry.getInstance().findInstanceContainers(id = container_id)
-            if not container_list:
-                raise RuntimeError("Failed to lazy-load container [%s], cannot find it" % container_id)
-            self.container = container_list[0]
-
-        return self.container
+    ##  The container that this node's container ID refers to.
+    #
+    #   This can be used to finally instantiate the container in order to put it
+    #   in the container stack.
+    #   \return A container.
+    @property
+    def container(self) -> Optional[InstanceContainer]:
+        if not self._container:
+            container_list = ContainerRegistry.getInstance().findInstanceContainers(id = self.container_id)
+            if len(container_list) == 0:
+                Logger.log("e", "Failed to lazy-load container [{container_id}]. Cannot find it.".format(container_id = self.container_id))
+                error_message = ConfigurationErrorMessage.getInstance()
+                error_message.addFaultyContainers(self.container_id)
+                return None
+            self._container = container_list[0]
+        return self._container
 
     def __str__(self) -> str:
-        return "%s[%s]" % (self.__class__.__name__, self.metadata.get("id"))
+        return "%s[%s]" % (self.__class__.__name__, self.container_id)
