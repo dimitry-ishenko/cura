@@ -1,4 +1,2 @@
 1000-exclude-fonts.patch
 1010-desktop-menu-location.patch
-1020-depend-latest-python3.patch
-1030-fix-appstream-xml.patch
