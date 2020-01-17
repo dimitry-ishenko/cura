@@ -6,13 +6,10 @@ from PyQt5 import QtCore
 from PyQt5.QtGui import QImage
 
 from cura.PreviewPass import PreviewPass
-from cura.Scene import ConvexHullNode
 
 from UM.Application import Application
-from UM.Math.AxisAlignedBox import AxisAlignedBox
 from UM.Math.Matrix import Matrix
 from UM.Math.Vector import Vector
-from UM.Mesh.MeshData import transformVertices
 from UM.Scene.Camera import Camera
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 
@@ -51,12 +48,12 @@ class Snapshot:
         # determine zoom and look at
         bbox = None
         for node in DepthFirstIterator(root):
-            if node.callDecoration("isSliceable") and node.getMeshData() and node.isVisible():
-                if bbox is None:
-                    bbox = node.getBoundingBox()
-                else:
-                    bbox = bbox + node.getBoundingBox()
-
+            if not getattr(node, "_outside_buildarea", False):
+                if node.callDecoration("isSliceable") and node.getMeshData() and node.isVisible() and not node.callDecoration("isNonThumbnailVisibleMesh"):
+                    if bbox is None:
+                        bbox = node.getBoundingBox()
+                    else:
+                        bbox = bbox + node.getBoundingBox()
         # If there is no bounding box, it means that there is no model in the buildplate
         if bbox is None:
             return None
@@ -69,7 +66,7 @@ class Snapshot:
         looking_from_offset = Vector(-1, 1, 2)
         if size > 0:
             # determine the watch distance depending on the size
-            looking_from_offset = looking_from_offset * size * 1.3
+            looking_from_offset = looking_from_offset * size * 1.75
         camera.setPosition(look_at + looking_from_offset)
         camera.lookAt(look_at)
 
@@ -88,8 +85,10 @@ class Snapshot:
             preview_pass.setCamera(camera)
             preview_pass.render()
             pixel_output = preview_pass.getOutput()
-
-            min_x, max_x, min_y, max_y = Snapshot.getImageBoundaries(pixel_output)
+            try:
+                min_x, max_x, min_y, max_y = Snapshot.getImageBoundaries(pixel_output)
+            except ValueError:
+                return None
 
             size = max((max_x - min_x) / render_width, (max_y - min_y) / render_height)
             if size > 0.5 or satisfied:

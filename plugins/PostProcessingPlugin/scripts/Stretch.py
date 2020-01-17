@@ -35,25 +35,39 @@ class GCodeStep():
     Class to store the current value of each G_Code parameter
     for any G-Code step
     """
-    def __init__(self, step):
+    def __init__(self, step, in_relative_movement: bool = False):
         self.step = step
         self.step_x = 0
         self.step_y = 0
         self.step_z = 0
         self.step_e = 0
         self.step_f = 0
+
+        self.in_relative_movement = in_relative_movement
+
         self.comment = ""
 
     def readStep(self, line):
         """
         Reads gcode from line into self
         """
-        self.step_x = _getValue(line, "X", self.step_x)
-        self.step_y = _getValue(line, "Y", self.step_y)
-        self.step_z = _getValue(line, "Z", self.step_z)
-        self.step_e = _getValue(line, "E", self.step_e)
-        self.step_f = _getValue(line, "F", self.step_f)
-        return
+        if not self.in_relative_movement:
+            self.step_x = _getValue(line, "X", self.step_x)
+            self.step_y = _getValue(line, "Y", self.step_y)
+            self.step_z = _getValue(line, "Z", self.step_z)
+            self.step_e = _getValue(line, "E", self.step_e)
+            self.step_f = _getValue(line, "F", self.step_f)
+        else:
+            delta_step_x = _getValue(line, "X", 0)
+            delta_step_y = _getValue(line, "Y", 0)
+            delta_step_z = _getValue(line, "Z", 0)
+            delta_step_e = _getValue(line, "E", 0)
+
+            self.step_x += delta_step_x
+            self.step_y += delta_step_y
+            self.step_z += delta_step_z
+            self.step_e += delta_step_e
+            self.step_f = _getValue(line, "F", self.step_f)  # the feedrate is not relative
 
     def copyPosFrom(self, step):
         """
@@ -65,7 +79,9 @@ class GCodeStep():
         self.step_e = step.step_e
         self.step_f = step.step_f
         self.comment = step.comment
-        return
+
+    def setInRelativeMovement(self, value: bool) -> None:
+        self.in_relative_movement = value
 
 
 # Execution part of the stretch plugin
@@ -86,6 +102,7 @@ class Stretcher():
                                     # of already deposited material for current layer
         self.layer_z = 0            # Z position of the extrusion moves of the current layer
         self.layergcode = ""
+        self._in_relative_movement = False
 
     def execute(self, data):
         """
@@ -96,7 +113,8 @@ class Stretcher():
                    + " and push wall stretch " + str(self.pw_stretch) + "mm")
         retdata = []
         layer_steps = []
-        current = GCodeStep(0)
+        in_relative_movement = False
+        current = GCodeStep(0, in_relative_movement)
         self.layer_z = 0.
         current_e = 0.
         for layer in data:
@@ -107,20 +125,49 @@ class Stretcher():
                     current.comment = line[line.find(";"):]
                 if _getValue(line, "G") == 0:
                     current.readStep(line)
-                    onestep = GCodeStep(0)
+                    onestep = GCodeStep(0, in_relative_movement)
                     onestep.copyPosFrom(current)
                 elif _getValue(line, "G") == 1:
+                    last_x = current.step_x
+                    last_y = current.step_y
+                    last_z = current.step_z
+                    last_e = current.step_e
                     current.readStep(line)
-                    onestep = GCodeStep(1)
-                    onestep.copyPosFrom(current)
+                    if (current.step_x == last_x and current.step_y == last_y and
+                        current.step_z == last_z and current.step_e != last_e
+                    ):
+                        # It's an extruder only move. Preserve it rather than process it as an
+                        # extruded move. Otherwise, the stretched output might contain slight
+                        # motion in X and Y in addition to E. This can cause problems with
+                        # firmwares that implement pressure advance.
+                        onestep = GCodeStep(-1, in_relative_movement)
+                        onestep.copyPosFrom(current)
+                        # Rather than copy the original line, write a new one with consistent
+                        # extruder coordinates
+                        onestep.comment = "G1 F{} E{}".format(onestep.step_f, onestep.step_e)
+                    else:
+                        onestep = GCodeStep(1, in_relative_movement)
+                        onestep.copyPosFrom(current)
+
+                # end of relative movement
+                elif _getValue(line, "G") == 90:
+                    in_relative_movement = False
+                    current.setInRelativeMovement(in_relative_movement)
+                # start of relative movement
+                elif _getValue(line, "G") == 91:
+                    in_relative_movement = True
+                    current.setInRelativeMovement(in_relative_movement)
+
                 elif _getValue(line, "G") == 92:
                     current.readStep(line)
-                    onestep = GCodeStep(-1)
-                    onestep.copyPosFrom(current)
-                else:
-                    onestep = GCodeStep(-1)
+                    onestep = GCodeStep(-1, in_relative_movement)
                     onestep.copyPosFrom(current)
                     onestep.comment = line
+                else:
+                    onestep = GCodeStep(-1, in_relative_movement)
+                    onestep.copyPosFrom(current)
+                    onestep.comment = line
+
                 if line.find(";LAYER:") >= 0 and len(layer_steps):
                     # Previous plugin "forgot" to separate two layers...
                     Logger.log("d", "Layer Z " + "{:.3f}".format(self.layer_z)

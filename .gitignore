@@ -14,6 +14,8 @@ CuraEngine.exe
 LC_MESSAGES
 .cache
 *.qmlc
+.mypy_cache
+.pytest_cache
 
 #MacOS
 .DS_Store
@@ -24,6 +26,7 @@ LC_MESSAGES
 *.lprof
 *~
 *.qm
+.directory
 .idea
 cura.desktop
 
@@ -32,12 +35,13 @@ cura.desktop
 .pydevproject
 .settings
 
-#Externally located plug-ins.
+#Externally located plug-ins commonly installed by our devs.
 plugins/cura-big-flame-graph
 plugins/cura-god-mode-plugin
 plugins/cura-siemensnx-plugin
 plugins/CuraBlenderPlugin
 plugins/CuraCloudPlugin
+plugins/CuraDrivePlugin
 plugins/CuraLiveScriptingPlugin
 plugins/CuraOpenSCADPlugin
 plugins/CuraPrintProfileCreator
@@ -48,6 +52,7 @@ plugins/FlatProfileExporter
 plugins/GodMode
 plugins/OctoPrintPlugin
 plugins/ProfileFlattener
+plugins/SettingsGuide
 plugins/X3GWriter
 
 #Build stuff
@@ -67,3 +72,7 @@ run.sh
 .scannerwork/
 CuraEngine
 
+/.coverage
+
+#Prevents import failures when plugin running tests
+plugins/__init__.py

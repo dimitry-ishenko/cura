@@ -10,28 +10,89 @@ import Cura 1.0 as Cura
 Menu
 {
     id: menu
-    title: "Material"
+    title: catalog.i18nc("@label:category menu label", "Material")
 
     property int extruderIndex: 0
+    property string currentRootMaterialId: Cura.MachineManager.currentRootMaterialId[extruderIndex]
+    property string activeMaterialId:
+    {
+        var extruder = Cura.MachineManager.activeMachine.extruderList[extruderIndex]
+        return (extruder === undefined) ? "" : extruder.material.id
+    }
+    property bool updateModels: true
+    Cura.FavoriteMaterialsModel
+    {
+        id: favoriteMaterialsModel
+        extruderPosition: menu.extruderIndex
+        enabled: updateModels
+    }
 
+    Cura.GenericMaterialsModel
+    {
+        id: genericMaterialsModel
+        extruderPosition: menu.extruderIndex
+        enabled: updateModels
+    }
+
+    Cura.MaterialBrandsModel
+    {
+        id: brandModel
+        extruderPosition: menu.extruderIndex
+        enabled: updateModels
+    }
+
+    MenuItem
+    {
+        text: catalog.i18nc("@label:category menu label", "Favorites")
+        enabled: false
+        visible: favoriteMaterialsModel.items.length > 0
+    }
     Instantiator
     {
-        model: genericMaterialsModel
-        MenuItem
+        model: favoriteMaterialsModel
+        delegate: MenuItem
         {
-            text: model.name
+            text: model.brand + " " + model.name
             checkable: true
-            checked: model.root_material_id == Cura.MachineManager.currentRootMaterialId[extruderIndex]
-            exclusiveGroup: group
-            onTriggered:
-            {
-                Cura.MachineManager.setMaterial(extruderIndex, model.container_node);
-            }
+            enabled: Cura.MachineManager.activeMachine.extruderList[extruderIndex].isEnabled
+            checked: model.root_material_id === menu.currentRootMaterialId
+            onTriggered: Cura.MachineManager.setMaterial(extruderIndex, model.container_node)
+            exclusiveGroup: favoriteGroup  // One favorite and one item from the others can be active at the same time.
         }
         onObjectAdded: menu.insertItem(index, object)
-        onObjectRemoved: menu.removeItem(object)
+        onObjectRemoved: menu.removeItem(index)
     }
-    MenuSeparator { }
+
+    MenuSeparator {}
+
+    Menu
+    {
+        id: genericMenu
+        title: catalog.i18nc("@label:category menu label", "Generic")
+
+        Instantiator
+        {
+            model: genericMaterialsModel
+            delegate: MenuItem
+            {
+                text: model.name
+                checkable: true
+                enabled:
+                {
+                    var extruder = Cura.MachineManager.activeMachine.extruderList[extruderIndex]
+                    return (extruder === undefined) ? false : extruder.isEnabled
+                }
+                checked: model.root_material_id === menu.currentRootMaterialId
+                exclusiveGroup: group
+                onTriggered: Cura.MachineManager.setMaterial(extruderIndex, model.container_node)
+            }
+            onObjectAdded: genericMenu.insertItem(index, object)
+            onObjectRemoved: genericMenu.removeItem(index)
+        }
+    }
+
+    MenuSeparator {}
+
     Instantiator
     {
         model: brandModel
@@ -40,12 +101,12 @@ Menu
             id: brandMenu
             title: brandName
             property string brandName: model.name
-            property var brandMaterials: model.materials
+            property var brandMaterials: model.material_types
 
             Instantiator
             {
                 model: brandMaterials
-                Menu
+                delegate: Menu
                 {
                     id: brandMaterialsMenu
                     title: materialName
@@ -55,17 +116,18 @@ Menu
                     Instantiator
                     {
                         model: brandMaterialColors
-                        MenuItem
+                        delegate: MenuItem
                         {
                             text: model.name
                             checkable: true
-                            checked: model.id == Cura.MachineManager.allActiveMaterialIds[Cura.ExtruderManager.extruderIds[extruderIndex]]
-                            exclusiveGroup: group
-                            onTriggered:
+                            enabled:
                             {
-                                var activeExtruderIndex = Cura.ExtruderManager.activeExtruderIndex;
-                                Cura.MachineManager.setMaterial(activeExtruderIndex, model.container_node);
+                                var extruder = Cura.MachineManager.activeMachine.extruderList[extruderIndex]
+                                return (extruder === undefined) ? false : extruder.isEnabled
                             }
+                            checked: model.id === menu.activeMaterialId
+                            exclusiveGroup: group
+                            onTriggered: Cura.MachineManager.setMaterial(extruderIndex, model.container_node)
                         }
                         onObjectAdded: brandMaterialsMenu.insertItem(index, object)
                         onObjectRemoved: brandMaterialsMenu.removeItem(object)
@@ -79,21 +141,20 @@ Menu
         onObjectRemoved: menu.removeItem(object)
     }
 
-    Cura.GenericMaterialsModel
+    ExclusiveGroup
     {
-        id: genericMaterialsModel
-        extruderPosition: menu.extruderIndex
+        id: group
     }
 
-    Cura.BrandMaterialsModel
+    ExclusiveGroup
     {
-        id: brandModel
-        extruderPosition: menu.extruderIndex
+        id: favoriteGroup
     }
 
-    ExclusiveGroup { id: group }
+    MenuSeparator {}
 
-    MenuSeparator { }
-
-    MenuItem { action: Cura.Actions.manageMaterials }
+    MenuItem
+    {
+        action: Cura.Actions.manageMaterials
+    }
 }

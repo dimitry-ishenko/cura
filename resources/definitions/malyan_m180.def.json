@@ -1,5 +1,4 @@
 {
-    "id": "malyan_m180",
     "version": 2,
     "name": "Malyan M180",
     "inherits": "fdmprinter",
@@ -7,7 +6,12 @@
         "visible": true,
         "author": "Ruben Dulek",
         "manufacturer": "Malyan",
-        "file_formats": "application/x3g"
+        "machine_x3g_variant": "r1d",
+        "file_formats": "application/x3g",
+        "machine_extruder_trains":
+        {
+            "0": "malyan_m180_extruder_0"
+        }
     },
 
     "overrides": {
@@ -23,9 +27,6 @@
         },
         "machine_center_is_zero": {
             "default_value": true
-        },
-        "machine_nozzle_size": {
-            "default_value": 0.4
         },
         "machine_head_with_fans_polygon": {
             "default_value": [
@@ -51,7 +52,7 @@
             "default_value": 92
         },
         "gantry_height": {
-            "default_value": 55
+            "value": "55"
         },
         "machine_gcode_flavor": {
             "default_value": "RepRap (Marlin/Sprinter)"
@@ -61,11 +62,6 @@
         },
         "machine_end_gcode": {
             "default_value": "G92 Z0\nG1 Z10 F400\nM18\nM109 S0 T0\nM104 S0 T0\nM73 P100 (end  build progress)\nG162 X Y F3000\nM18"
-        },
-        "material_diameter": {
-            "default_value": 1.75,
-            "minimum_value_warning": "1.5",
-            "maximum_value_warning": "2.0"
         }
     }
 }

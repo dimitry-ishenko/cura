@@ -12,18 +12,17 @@ import json
 import ssl
 import urllib.request
 import urllib.error
-import shutil
 
-from PyQt5.QtCore import QT_VERSION_STR, PYQT_VERSION_STR, Qt, QUrl
+import certifi
+
+from PyQt5.QtCore import QT_VERSION_STR, PYQT_VERSION_STR, QUrl
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel, QTextEdit, QGroupBox, QCheckBox, QPushButton
 from PyQt5.QtGui import QDesktopServices
 
-from UM.Resources import Resources
 from UM.Application import Application
 from UM.Logger import Logger
 from UM.View.GL.OpenGL import OpenGL
 from UM.i18n import i18nCatalog
-from UM.Platform import Platform
 from UM.Resources import Resources
 
 catalog = i18nCatalog("cura")
@@ -37,17 +36,13 @@ else:
     except ImportError:
         CuraDebugMode = False  # [CodeStyle: Reflecting imported value]
 
-# List of exceptions that should be considered "fatal" and abort the program.
-# These are primarily some exception types that we simply cannot really recover from
-# (MemoryError and SystemError) and exceptions that indicate grave errors in the
-# code that cause the Python interpreter to fail (SyntaxError, ImportError).
-fatal_exception_types = [
-    MemoryError,
-    SyntaxError,
-    ImportError,
-    SystemError,
+# List of exceptions that should not be considered "fatal" and abort the program.
+# These are primarily some exception types that we simply skip
+skip_exception_types = [
+    SystemExit,
+    KeyboardInterrupt,
+    GeneratorExit
 ]
-
 
 class CrashHandler:
     crash_url = "https://stats.ultimaker.com/api/cura"
@@ -71,7 +66,7 @@ class CrashHandler:
         # If Cura has fully started, we only show fatal errors.
         # If Cura has not fully started yet, we always show the early crash dialog. Otherwise, Cura will just crash
         # without any information.
-        if has_started and exception_type not in fatal_exception_types:
+        if has_started and exception_type in skip_exception_types:
             return
 
         if not has_started:
@@ -131,66 +126,13 @@ class CrashHandler:
             self._sendCrashReport()
         os._exit(1)
 
+    ##  Backup the current resource directories and create clean ones.
     def _backupAndStartClean(self):
-        # backup the current cura directories and create clean ones
-        from cura.CuraVersion import CuraVersion
-        from UM.Resources import Resources
-        # The early crash may happen before those information is set in Resources, so we need to set them here to
-        # make sure that Resources can find the correct place.
-        Resources.ApplicationIdentifier = "cura"
-        Resources.ApplicationVersion = CuraVersion
-        config_path = Resources.getConfigStoragePath()
-        data_path = Resources.getDataStoragePath()
-        cache_path = Resources.getCacheStoragePath()
-
-        folders_to_backup = []
-        folders_to_remove = []  # only cache folder needs to be removed
-
-        folders_to_backup.append(config_path)
-        if data_path != config_path:
-            folders_to_backup.append(data_path)
-
-        # Only remove the cache folder if it's not the same as data or config
-        if cache_path not in (config_path, data_path):
-            folders_to_remove.append(cache_path)
-
-        for folder in folders_to_remove:
-            shutil.rmtree(folder, ignore_errors = True)
-        for folder in folders_to_backup:
-            base_name = os.path.basename(folder)
-            root_dir = os.path.dirname(folder)
-
-            import datetime
-            date_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            idx = 0
-            file_name = base_name + "_" + date_now
-            zip_file_path = os.path.join(root_dir, file_name + ".zip")
-            while os.path.exists(zip_file_path):
-                idx += 1
-                file_name = base_name + "_" + date_now + "_" + idx
-                zip_file_path = os.path.join(root_dir, file_name + ".zip")
-            try:
-                # only create the zip backup when the folder exists
-                if os.path.exists(folder):
-                    # remove the .zip extension because make_archive() adds it
-                    zip_file_path = zip_file_path[:-4]
-                    shutil.make_archive(zip_file_path, "zip", root_dir = root_dir, base_dir = base_name)
-
-                    # remove the folder only when the backup is successful
-                    shutil.rmtree(folder, ignore_errors = True)
-
-                # create an empty folder so Resources will not try to copy the old ones
-                os.makedirs(folder, 0o0755, exist_ok=True)
-
-            except Exception as e:
-                Logger.logException("e", "Failed to backup [%s] to file [%s]", folder, zip_file_path)
-                if not self.has_started:
-                    print("Failed to backup [%s] to file [%s]: %s", folder, zip_file_path, e)
-
+        Resources.factoryReset()
         self.early_crash_dialog.close()
 
     def _showConfigurationFolder(self):
-        path = Resources.getConfigStoragePath();
+        path = Resources.getConfigStoragePath()
         QDesktopServices.openUrl(QUrl.fromLocalFile( path ))
 
     def _showDetailedReport(self):
@@ -377,7 +319,8 @@ class CrashHandler:
 
     def _userDescriptionWidget(self):
         group = QGroupBox()
-        group.setTitle(catalog.i18nc("@title:groupbox", "User description"))
+        group.setTitle(catalog.i18nc("@title:groupbox", "User description" +
+                                     " (Note: Developers may not speak your language, please use English if possible)"))
         layout = QVBoxLayout()
 
         # When sending the report, the user comments will be collected
@@ -409,11 +352,13 @@ class CrashHandler:
         # Convert data to bytes
         binary_data = json.dumps(self.data).encode("utf-8")
 
+        # CURA-6698 Create an SSL context and use certifi CA certificates for verification.
+        context = ssl.SSLContext(protocol=ssl.PROTOCOL_TLSv1_2)
+        context.load_verify_locations(cafile = certifi.where())
         # Submit data
-        kwoptions = {"data": binary_data, "timeout": 5}
-
-        if Platform.isOSX():
-            kwoptions["context"] = ssl._create_unverified_context()
+        kwoptions = {"data": binary_data,
+                     "timeout": 5,
+                     "context": context}
 
         Logger.log("i", "Sending crash report info to [%s]...", self.crash_url)
         if not self.has_started:
@@ -441,7 +386,7 @@ class CrashHandler:
         Application.getInstance().callLater(self._show)
 
     def _show(self):
-        # When the exception is not in the fatal_exception_types list, the dialog is not created, so we don't need to show it
+        # When the exception is in the skip_exception_types list, the dialog is not created, so we don't need to show it
         if self.dialog:
             self.dialog.exec_()
         os._exit(1)
