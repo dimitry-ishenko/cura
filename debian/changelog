@@ -9,6 +9,7 @@ cura (4.4.1-1) UNRELEASED; urgency=medium
   * Remove patches 1020-depend-latest-python3 and
     1030-fix-appstream-xml, applied upstream.
   * Add new dependencies python3-requests and python3-shapely.
+  * Remove ancient X-Python3-Version field with version 3.5.
 
  -- Gregor Riepl <onitake@gmail.com>  Fri, 19 Oct 2018 08:34:40 +0200
 
