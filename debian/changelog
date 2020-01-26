@@ -11,6 +11,7 @@ cura (4.4.1-1) UNRELEASED; urgency=medium
   * Add new dependencies python3-requests and python3-shapely.
   * Remove ancient X-Python3-Version field with version 3.5.
   * Disable calling-home telemetry by default.
+  * Build-depend on python3-all-dev so cmake finds python.
 
  -- Gregor Riepl <onitake@gmail.com>  Fri, 19 Oct 2018 08:34:40 +0200
 
