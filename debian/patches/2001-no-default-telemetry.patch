@@ -1,0 +1,22 @@
+--- a/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
++++ b/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
+@@ -28,7 +28,7 @@ class FirmwareUpdateChecker(Extension):
+ 
+         # Listen to a Signal that indicates a change in the list of printers, just if the user has enabled the
+         # "check for updates" option
+-        Application.getInstance().getPreferences().addPreference("info/automatic_update_check", True)
++        Application.getInstance().getPreferences().addPreference("info/automatic_update_check", False)
+         if Application.getInstance().getPreferences().getValue("info/automatic_update_check"):
+             ContainerRegistry.getInstance().containerAdded.connect(self._onContainerAdded)
+ 
+--- a/plugins/SliceInfoPlugin/SliceInfo.py
++++ b/plugins/SliceInfoPlugin/SliceInfo.py
+@@ -37,7 +37,7 @@ class SliceInfo(QObject, Extension):
+         self._application = Application.getInstance()
+ 
+         self._application.getOutputDeviceManager().writeStarted.connect(self._onWriteStarted)
+-        self._application.getPreferences().addPreference("info/send_slice_info", True)
++        self._application.getPreferences().addPreference("info/send_slice_info", False)
+         self._application.getPreferences().addPreference("info/asked_send_slice_info", False)
+ 
+         self._more_info_dialog = None
