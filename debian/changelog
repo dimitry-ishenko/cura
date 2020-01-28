@@ -1,4 +1,6 @@
-cura (4.4.1-1) UNRELEASED; urgency=medium
+cura (4.4.1-1) unstable; urgency=medium
+
+  * Team upload.
 
   [ Gregor Riepl ]
   * Require at least PyQt 5.10 to address upstream bug
@@ -16,7 +18,7 @@ cura (4.4.1-1) UNRELEASED; urgency=medium
   * Build-depend on python3-all-dev so cmake finds python.
   * Copy-edit package description.
 
- -- Gregor Riepl <onitake@gmail.com>  Fri, 19 Oct 2018 08:34:40 +0200
+ -- Christoph Berg <myon@debian.org>  Tue, 28 Jan 2020 22:17:19 +0100
 
 cura (3.3.1-2) unstable; urgency=medium
 

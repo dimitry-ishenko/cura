@@ -10,7 +10,7 @@ Build-Depends: cmake (>=2.8.12),
                python3-pytest,
                python3-uranium (>= 4.4.0), python3-uranium (<< 4.5),
                uranium-tools (>= 4.4.0), uranium-tools (<< 4.5)
-Standards-Version: 4.1.4
+Standards-Version: 4.5.0
 Section: misc
 Homepage: https://github.com/Ultimaker/Cura
 Vcs-Browser: https://salsa.debian.org/3dprinting-team/cura
