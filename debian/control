@@ -8,8 +8,8 @@ Build-Depends: cmake (>=2.8.12),
                gettext,
                python3-all-dev,
                python3-pytest,
-               python3-uranium (>= 4.4.0),
-               uranium-tools (>= 4.4.0),
+               python3-uranium (>= 4.5.0),
+               uranium-tools (>= 4.5.0),
 Standards-Version: 4.5.0
 Section: misc
 Homepage: https://github.com/Ultimaker/Cura
@@ -18,23 +18,23 @@ Vcs-Git: https://salsa.debian.org/3dprinting-team/cura.git
 
 Package: cura
 Architecture: all
-Depends: cura-engine (>= 1:4.4.0), cura-engine (<< 1:4.5),
+Depends: cura-engine (>= 1:4.5.0), cura-engine (<< 1:4.6),
          fonts-open-sans,
          python3-charon,
          python3-pyqt5 (>=5.10),
          python3-pyqt5.qtopengl (>=5.10),
          python3-requests,
-         python3-savitar (>= 4.4.0),
+         python3-savitar (>= 4.5.0),
          python3-serial,
          python3-shapely,
-         python3-uranium (>= 4.4.0),
+         python3-uranium (>= 4.5.0),
          qml-module-qt-labs-folderlistmodel,
          qml-module-qt-labs-settings,
          qml-module-qtqml-models2,
          qml-module-qtquick-controls,
          qml-module-qtquick-controls2,
          qml-module-qtquick-dialogs,
-         uranium-plugins (>= 4.4.0),
+         uranium-plugins (>= 4.5.0),
          fdm-materials,
          ${misc:Depends},
          ${python3:Depends},

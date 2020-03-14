@@ -11,8 +11,8 @@
  
 --- a/plugins/SliceInfoPlugin/SliceInfo.py
 +++ b/plugins/SliceInfoPlugin/SliceInfo.py
-@@ -37,7 +37,7 @@ class SliceInfo(QObject, Extension):
-         self._application = Application.getInstance()
+@@ -40,7 +40,7 @@ class SliceInfo(QObject, Extension):
+         self._application = CuraApplication.getInstance()
  
          self._application.getOutputDeviceManager().writeStarted.connect(self._onWriteStarted)
 -        self._application.getPreferences().addPreference("info/send_slice_info", True)

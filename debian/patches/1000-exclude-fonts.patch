@@ -5,13 +5,13 @@ Description: Fonts should be packaged separately.
   A dependency on fonts-open-sans was added to debian/control.
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -62,7 +62,8 @@ endif()
+@@ -63,7 +63,8 @@ endif()
  
  
  install(DIRECTORY resources
 -        DESTINATION ${CMAKE_INSTALL_DATADIR}/cura)
 +        DESTINATION ${CMAKE_INSTALL_DATADIR}/cura
 +        PATTERN resources/themes/cura-light/fonts EXCLUDE)
- install(DIRECTORY plugins
-         DESTINATION lib${LIB_SUFFIX}/cura)
+ 
+ include(CuraPluginInstall)
  
