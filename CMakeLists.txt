@@ -23,6 +23,7 @@ set(CURA_BUILDTYPE "" CACHE STRING "Build type of Cura, eg. 'PPA'")
 set(CURA_CLOUD_API_ROOT "" CACHE STRING "Alternative Cura cloud API root")
 set(CURA_CLOUD_API_VERSION "" CACHE STRING "Alternative Cura cloud API version")
 set(CURA_CLOUD_ACCOUNT_API_ROOT "" CACHE STRING "Alternative Cura cloud account API version")
+set(CURA_MARKETPLACE_ROOT "" CACHE STRING "Alternative Marketplace location")
 
 configure_file(${CMAKE_SOURCE_DIR}/cura.desktop.in ${CMAKE_BINARY_DIR}/cura.desktop @ONLY)
 
@@ -49,7 +50,7 @@ endif()
 
 
 if(NOT ${URANIUM_DIR} STREQUAL "")
-    set(CMAKE_MODULE_PATH "${URANIUM_DIR}/cmake")
+    set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${URANIUM_DIR}/cmake")
 endif()
 if(NOT ${URANIUM_SCRIPTS_DIR} STREQUAL "")
     list(APPEND CMAKE_MODULE_PATH ${URANIUM_DIR}/cmake)
@@ -63,8 +64,8 @@ endif()
 
 install(DIRECTORY resources
         DESTINATION ${CMAKE_INSTALL_DATADIR}/cura)
-install(DIRECTORY plugins
-        DESTINATION lib${LIB_SUFFIX}/cura)
+
+include(CuraPluginInstall)
 
 if(NOT APPLE AND NOT WIN32)
     install(FILES cura_app.py
