@@ -8,8 +8,23 @@ import faulthandler
 import os
 import sys
 
+# Workaround for a race condition on certain systems where there
+# is a race condition between Arcus and PyQt. Importing Arcus
+# first seems to prevent Sip from going into a state where it
+# tries to create PyQt objects on a non-main thread.
+import Arcus  # @UnusedImport
+import Savitar  # @UnusedImport
+
 from UM.Platform import Platform
+from cura import ApplicationMetadata
 from cura.ApplicationMetadata import CuraAppName
+from cura.CrashHandler import CrashHandler
+
+try:
+    import sentry_sdk
+    with_sentry_sdk = True
+except ImportError:
+    with_sentry_sdk = False
 
 parser = argparse.ArgumentParser(prog = "cura",
                                  add_help = False)
@@ -18,7 +33,31 @@ parser.add_argument("--debug",
                     default = False,
                     help = "Turn on the debug mode by setting this option."
                     )
+
 known_args = vars(parser.parse_known_args()[0])
+
+if with_sentry_sdk:
+    sentry_env = "unknown"  # Start off with a "IDK"
+    if hasattr(sys, "frozen"):
+        sentry_env = "production"  # A frozen build has the posibility to be a "real" distribution.
+
+    if ApplicationMetadata.CuraVersion == "master":
+        sentry_env = "development"  # Master is always a development version.
+    elif ApplicationMetadata.CuraVersion in ["beta", "BETA"]:
+        sentry_env = "beta"
+    try:
+        if ApplicationMetadata.CuraVersion.split(".")[2] == "99":
+            sentry_env = "nightly"
+    except IndexError:
+        pass
+
+    sentry_sdk.init("https://5034bf0054fb4b889f82896326e79b13@sentry.io/1821564",
+                    before_send = CrashHandler.sentryBeforeSend,
+                    environment = sentry_env,
+                    release = "cura%s" % ApplicationMetadata.CuraVersion,
+                    default_integrations = False,
+                    max_breadcrumbs = 300,
+                    server_name = "cura")
 
 if not known_args["debug"]:
     def get_cura_dir_path():
@@ -136,12 +175,7 @@ if sys.stderr:
 else:
     faulthandler.enable(file = sys.stdout, all_threads = True)
 
-# Workaround for a race condition on certain systems where there
-# is a race condition between Arcus and PyQt. Importing Arcus
-# first seems to prevent Sip from going into a state where it
-# tries to create PyQt objects on a non-main thread.
-import Arcus #@UnusedImport
-import Savitar #@UnusedImport
+
 from cura.CuraApplication import CuraApplication
 
 
