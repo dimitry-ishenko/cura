@@ -3,7 +3,7 @@ Priority: optional
 Maintainer: Debian 3-D Printing Packages <3dprinter-general@lists.alioth.debian.org>
 Uploaders: Gregor Riepl <onitake@gmail.com>
 Build-Depends: cmake (>= 2.8.12),
-               debhelper (>= 12~),
+               debhelper-compat (= 12),
                dh-python,
                gettext,
                python3-all-dev,
