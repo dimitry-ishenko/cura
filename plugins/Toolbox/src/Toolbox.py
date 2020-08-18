@@ -9,22 +9,20 @@ from typing import cast, Any, Dict, List, Set, TYPE_CHECKING, Tuple, Optional, U
 from PyQt5.QtCore import QObject, pyqtProperty, pyqtSignal, pyqtSlot
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 
+from UM.Extension import Extension
 from UM.Logger import Logger
 from UM.PluginRegistry import PluginRegistry
-from UM.Extension import Extension
-from UM.i18n import i18nCatalog
+from UM.TaskManagement.HttpRequestScope import JsonDecoratorScope
 from UM.Version import Version
-
+from UM.i18n import i18nCatalog
 from cura import ApplicationMetadata
-
 from cura.CuraApplication import CuraApplication
 from cura.Machines.ContainerTree import ContainerTree
-
-from .CloudApiModel import CloudApiModel
+from cura.UltimakerCloud.UltimakerCloudScope import UltimakerCloudScope
 from .AuthorsModel import AuthorsModel
+from .CloudApiModel import CloudApiModel
 from .CloudSync.LicenseModel import LicenseModel
 from .PackagesModel import PackagesModel
-from .UltimakerCloudScope import UltimakerCloudScope
 
 if TYPE_CHECKING:
     from UM.TaskManagement.HttpRequestData import HttpRequestData
@@ -54,7 +52,8 @@ class Toolbox(QObject, Extension):
         self._download_request_data = None  # type: Optional[HttpRequestData]
         self._download_progress = 0  # type: float
         self._is_downloading = False  # type: bool
-        self._scope = UltimakerCloudScope(application)  # type: UltimakerCloudScope
+        self._cloud_scope = UltimakerCloudScope(application)  # type: UltimakerCloudScope
+        self._json_scope = JsonDecoratorScope(self._cloud_scope)  # type: JsonDecoratorScope
 
         self._request_urls = {}  # type: Dict[str, str]
         self._to_update = []  # type: List[str] # Package_ids that are waiting to be updated
@@ -78,10 +77,15 @@ class Toolbox(QObject, Extension):
         self._plugins_showcase_model = PackagesModel(self)
         self._plugins_available_model = PackagesModel(self)
         self._plugins_installed_model = PackagesModel(self)
-
+        self._plugins_installed_model.setFilter({"is_bundled": "False"})
+        self._plugins_bundled_model = PackagesModel(self)
+        self._plugins_bundled_model.setFilter({"is_bundled": "True"})
         self._materials_showcase_model = AuthorsModel(self)
         self._materials_available_model = AuthorsModel(self)
         self._materials_installed_model = PackagesModel(self)
+        self._materials_installed_model.setFilter({"is_bundled": "False"})
+        self._materials_bundled_model = PackagesModel(self)
+        self._materials_bundled_model.setFilter({"is_bundled": "True"})
         self._materials_generic_model = PackagesModel(self)
 
         self._license_model = LicenseModel()
@@ -151,7 +155,7 @@ class Toolbox(QObject, Extension):
         url = "{base_url}/packages/{package_id}/ratings".format(base_url = CloudApiModel.api_url, package_id = package_id)
         data = "{\"data\": {\"cura_version\": \"%s\", \"rating\": %i}}" % (Version(self._application.getVersion()), rating)
 
-        self._application.getHttpRequestManager().put(url, data = data.encode(), scope = self._scope)
+        self._application.getHttpRequestManager().put(url, data = data.encode(), scope = self._json_scope)
 
     def getLicenseDialogPluginFileLocation(self) -> str:
         return self._license_dialog_plugin_file_location
@@ -290,9 +294,11 @@ class Toolbox(QObject, Extension):
             self._old_plugin_metadata = {k: v for k, v in self._old_plugin_metadata.items() if k in self._old_plugin_ids}
 
             self._plugins_installed_model.setMetadata(all_packages["plugin"] + list(self._old_plugin_metadata.values()))
+            self._plugins_bundled_model.setMetadata(all_packages["plugin"] + list(self._old_plugin_metadata.values()))
             self.metadataChanged.emit()
         if "material" in all_packages:
             self._materials_installed_model.setMetadata(all_packages["material"])
+            self._materials_bundled_model.setMetadata(all_packages["material"])
             self.metadataChanged.emit()
 
     @pyqtSlot(str)
@@ -541,7 +547,7 @@ class Toolbox(QObject, Extension):
         self._application.getHttpRequestManager().get(url,
                                                       callback = callback,
                                                       error_callback = error_callback,
-                                                      scope=self._scope)
+                                                      scope=self._json_scope)
 
     @pyqtSlot(str)
     def startDownload(self, url: str) -> None:
@@ -554,7 +560,7 @@ class Toolbox(QObject, Extension):
                                                                      callback = callback,
                                                                      error_callback = error_callback,
                                                                      download_progress_callback = download_progress_callback,
-                                                                     scope=self._scope
+                                                                     scope=self._cloud_scope
                                                                      )
 
         self._download_request_data = request_data
@@ -759,6 +765,10 @@ class Toolbox(QObject, Extension):
         return self._plugins_installed_model
 
     @pyqtProperty(QObject, constant = True)
+    def pluginsBundledModel(self) -> PackagesModel:
+        return self._plugins_bundled_model
+
+    @pyqtProperty(QObject, constant = True)
     def materialsShowcaseModel(self) -> AuthorsModel:
         return self._materials_showcase_model
 
@@ -769,6 +779,10 @@ class Toolbox(QObject, Extension):
     @pyqtProperty(QObject, constant = True)
     def materialsInstalledModel(self) -> PackagesModel:
         return self._materials_installed_model
+
+    @pyqtProperty(QObject, constant = True)
+    def materialsBundledModel(self) -> PackagesModel:
+        return self._materials_bundled_model
 
     @pyqtProperty(QObject, constant = True)
     def materialsGenericModel(self) -> PackagesModel:

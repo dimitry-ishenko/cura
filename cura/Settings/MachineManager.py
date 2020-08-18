@@ -320,7 +320,23 @@ class MachineManager(QObject):
             # This signal might not have been emitted yet (if it didn't change) but we still want the models to update that depend on it because we changed the contents of the containers too.
             extruder_manager.activeExtruderChanged.emit()
 
-        self.__emitChangedSignals()
+        # Validate if the machine has the correct variants and materials.
+        # It can happen that a variant or material is empty, even though the machine has them. This will ensure that
+        # that situation will be fixed (and not occur again, since it switches it out to the preferred variant or
+        # variant instead!)
+        machine_node = ContainerTree.getInstance().machines[global_stack.definition.getId()]
+        for extruder in self._global_container_stack.extruderList:
+            variant_name = extruder.variant.getName()
+            variant_node = machine_node.variants.get(variant_name)
+            if variant_node is None:
+                Logger.log("w", "An extruder has an unknown variant, switching it to the preferred variant")
+                self.setVariantByName(extruder.getMetaDataEntry("position"), machine_node.preferred_variant_name)
+                variant_node = machine_node.variants.get(machine_node.preferred_variant_name)
+
+            material_node = variant_node.materials.get(extruder.material.getMetaDataEntry("base_file"))
+            if material_node is None:
+                Logger.log("w", "An extruder has an unknown material, switching it to the preferred material")
+                self.setMaterialById(extruder.getMetaDataEntry("position"), machine_node.preferred_material)
 
     ##  Given a definition id, return the machine with this id.
     #   Optional: add a list of keys and values to filter the list of machines with the given definition id
@@ -336,9 +352,9 @@ class MachineManager(QObject):
                 return cast(GlobalStack, machine)
         return None
 
-    @pyqtSlot(str)
-    @pyqtSlot(str, str)
-    def addMachine(self, definition_id: str, name: Optional[str] = None) -> None:
+    @pyqtSlot(str, result=bool)
+    @pyqtSlot(str, str, result = bool)
+    def addMachine(self, definition_id: str, name: Optional[str] = None) -> bool:
         Logger.log("i", "Trying to add a machine with the definition id [%s]", definition_id)
         if name is None:
             definitions = CuraContainerRegistry.getInstance().findDefinitionContainers(id = definition_id)
@@ -353,6 +369,8 @@ class MachineManager(QObject):
             self.setActiveMachine(new_stack.getId())
         else:
             Logger.log("w", "Failed creating a new machine!")
+            return False
+        return True
 
     def _checkStacksHaveErrors(self) -> bool:
         time_start = time.time()
@@ -671,7 +689,10 @@ class MachineManager(QObject):
             if other_machine_stacks:
                 self.setActiveMachine(other_machine_stacks[0]["id"])
 
-        metadata = CuraContainerRegistry.getInstance().findContainerStacksMetadata(id = machine_id)[0]
+        metadatas = CuraContainerRegistry.getInstance().findContainerStacksMetadata(id = machine_id)
+        if not metadatas:
+            return  # machine_id doesn't exist. Nothing to remove.
+        metadata = metadatas[0]
         ExtruderManager.getInstance().removeMachineExtruders(machine_id)
         containers = CuraContainerRegistry.getInstance().findInstanceContainersMetadata(type = "user", machine = machine_id)
         for container in containers:
@@ -800,7 +821,7 @@ class MachineManager(QObject):
         definition_changes_container.setProperty("machine_extruder_count", "value", extruder_count)
 
         self.updateDefaultExtruder()
-        self.updateNumberExtrudersEnabled()
+        self.numberExtrudersEnabledChanged.emit()
         self.correctExtruderSettings()
 
         # Check to see if any objects are set to print with an extruder that will no longer exist
@@ -1233,7 +1254,11 @@ class MachineManager(QObject):
             return
         Logger.log("i", "Attempting to switch the printer type to [%s]", machine_name)
         # Get the definition id corresponding to this machine name
-        machine_definition_id = CuraContainerRegistry.getInstance().findDefinitionContainers(name = machine_name)[0].getId()
+        definitions = CuraContainerRegistry.getInstance().findDefinitionContainers(name=machine_name)
+        if not definitions:
+            Logger.log("e", "Unable to switch printer type since it could not be found!")
+            return
+        machine_definition_id = definitions[0].getId()
         # Try to find a machine with the same network key
         metadata_filter = {"group_id": self._global_container_stack.getMetaDataEntry("group_id")}
         new_machine = self.getMachine(machine_definition_id, metadata_filter = metadata_filter)
@@ -1507,7 +1532,17 @@ class MachineManager(QObject):
             if quality_id == empty_quality_container.getId():
                 extruder.intent = empty_intent_container
                 continue
-            quality_node = container_tree.machines[definition_id].variants[variant_name].materials[material_base_file].qualities[quality_id]
+
+            # Yes, we can find this in a single line of code. This makes it easier to read and it has the benefit
+            # that it doesn't lump key errors together for the crashlogs
+            try:
+                machine_node = container_tree.machines[definition_id]
+                variant_node = machine_node.variants[variant_name]
+                material_node = variant_node.materials[material_base_file]
+                quality_node = material_node.qualities[quality_id]
+            except KeyError as e:
+                Logger.error("Can't set the intent category '{category}' since the profile '{profile}' in the stack is not supported according to the container tree.".format(category = intent_category, profile = e))
+                continue
 
             for intent_node in quality_node.intents.values():
                 if intent_node.intent_category == intent_category:  # Found an intent with the correct category.
