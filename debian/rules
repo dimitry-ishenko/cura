@@ -19,4 +19,5 @@ override_dh_clean:
 	find -name __pycache__ -print0 | xargs -0 rm -rf
 
 override_dh_auto_test:
-	tmpdir=$(mktemp -d); HOME=$$tmpdir dh_auto_test; rm -rf $$tmpdir
+	mkdir -p debian/home
+	HOME=$(CURDIR)/debian/home dh_auto_test

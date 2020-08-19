@@ -1,4 +1,4 @@
-cura (4.6.2-1) UNRELEASED; urgency=medium
+cura (4.6.2-1) unstable; urgency=medium
 
   * Team upload.
 
@@ -11,8 +11,10 @@ cura (4.6.2-1) UNRELEASED; urgency=medium
 
   [ Christoph Berg ]
   * New upstream version.
+  * Don't ignore testsuite failures.
+  * Install missing test dependencies.
 
- -- Debian Janitor <janitor@jelmer.uk>  Mon, 04 May 2020 12:32:00 +0000
+ -- Christoph Berg <myon@debian.org>  Wed, 19 Aug 2020 13:09:01 +0200
 
 cura (4.5.0-1) unstable; urgency=medium
 
