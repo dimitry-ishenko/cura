@@ -1,3 +1,10 @@
+cura (4.7.1-2) unstable; urgency=medium
+
+  * Bump cura-engine dependency to 4.7.
+  * Add myself to uploaders.
+
+ -- Christoph Berg <myon@debian.org>  Mon, 07 Sep 2020 22:11:25 +0200
+
 cura (4.7.1-1) unstable; urgency=medium
 
   * Team upload.
