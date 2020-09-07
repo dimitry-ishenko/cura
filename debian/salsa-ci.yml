@@ -4,4 +4,8 @@ include:
   - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/pipeline-jobs.yml
 
 reprotest:
+  # shapely has problems finding the C library:
+  # OSError: Could not find lib c or load any of its variants ['libc.musl-x86_64.so.1'].
+  # https://salsa.debian.org/3dprinting-team/cura/-/jobs/983030/raw
+  allow_failure: true
   extends: .test-reprotest-diffoscope
