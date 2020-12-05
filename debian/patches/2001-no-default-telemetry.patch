@@ -1,6 +1,8 @@
---- a/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
-+++ b/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
-@@ -28,7 +28,7 @@ class FirmwareUpdateChecker(Extension):
+Index: Cura/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
+===================================================================
+--- Cura.orig/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py	2020-12-05 19:21:55.076201826 +0100
++++ Cura/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py	2020-12-05 19:21:55.072201725 +0100
+@@ -30,7 +30,7 @@
  
          # Listen to a Signal that indicates a change in the list of printers, just if the user has enabled the
          # "check for updates" option
@@ -9,9 +11,11 @@
          if Application.getInstance().getPreferences().getValue("info/automatic_update_check"):
              ContainerRegistry.getInstance().containerAdded.connect(self._onContainerAdded)
  
---- a/plugins/SliceInfoPlugin/SliceInfo.py
-+++ b/plugins/SliceInfoPlugin/SliceInfo.py
-@@ -40,7 +40,7 @@ class SliceInfo(QObject, Extension):
+Index: Cura/plugins/SliceInfoPlugin/SliceInfo.py
+===================================================================
+--- Cura.orig/plugins/SliceInfoPlugin/SliceInfo.py	2020-12-05 19:21:55.076201826 +0100
++++ Cura/plugins/SliceInfoPlugin/SliceInfo.py	2020-12-05 19:21:55.072201725 +0100
+@@ -43,7 +43,7 @@
          self._application = CuraApplication.getInstance()
  
          self._application.getOutputDeviceManager().writeStarted.connect(self._onWriteStarted)

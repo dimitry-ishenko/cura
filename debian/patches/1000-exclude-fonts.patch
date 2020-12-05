@@ -3,9 +3,11 @@ Description: Fonts should be packaged separately.
   This patch excludes the installation of Open Sans,
   so a system version is picked up instead.
   A dependency on fonts-open-sans was added to debian/control.
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -63,7 +63,8 @@ endif()
+Index: Cura/CMakeLists.txt
+===================================================================
+--- Cura.orig/CMakeLists.txt	2020-12-05 19:21:48.460036936 +0100
++++ Cura/CMakeLists.txt	2020-12-05 19:21:48.460036936 +0100
+@@ -60,7 +60,8 @@
  
  
  install(DIRECTORY resources
