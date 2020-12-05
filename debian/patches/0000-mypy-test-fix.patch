@@ -1,0 +1,35 @@
+From 00bc1bfcdc960d4bad62adc4b1615ca4cc6b3cee Mon Sep 17 00:00:00 2001
+From: Jaime van Kessel <nallath@gmail.com>
+Date: Fri, 27 Nov 2020 10:46:33 +0100
+Subject: [PATCH] Add extra cast to author model
+
+Contributes to #8817
+---
+ plugins/Toolbox/src/AuthorsModel.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/Toolbox/src/AuthorsModel.py b/plugins/Toolbox/src/AuthorsModel.py
+index 9a8e7f5df..04c8ed3a4 100644
+--- a/plugins/Toolbox/src/AuthorsModel.py
++++ b/plugins/Toolbox/src/AuthorsModel.py
+@@ -2,7 +2,7 @@
+ # Cura is released under the terms of the LGPLv3 or higher.
+ 
+ import re
+-from typing import Dict, List, Optional, Union
++from typing import Dict, List, Optional, Union, cast
+ 
+ from PyQt5.QtCore import Qt, pyqtProperty
+ 
+@@ -68,7 +68,7 @@ class AuthorsModel(ListModel):
+         # Execute all filters.
+         filtered_items = list(items)
+ 
+-        filtered_items.sort(key = lambda k: k["name"])
++        filtered_items.sort(key = lambda k: cast(str, k["name"]))
+         self.setItems(filtered_items)
+ 
+     def setFilter(self, filter_dict: Dict[str, str]) -> None:
+-- 
+2.29.2
+

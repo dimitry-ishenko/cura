@@ -1,3 +1,4 @@
 1000-exclude-fonts.patch
 1010-desktop-menu-location.patch
 2001-no-default-telemetry.patch
+0000-mypy-test-fix.patch
