@@ -1,4 +1,4 @@
-cura (4.8-1) UNRELEASED; urgency=medium
+cura (4.8-1) unstable; urgency=medium
 
   * debian/watch: Handle -beta releases.
   * New upstream version 4.8.
