@@ -1,0 +1,25 @@
+From: Ghostkeeper <rubend@tutanota.com>
+Date: Fri, 16 Oct 2020 14:18:17 +0200
+Subject: Fix PyCapsule_GetPointer error when running tests
+
+This obscure error happens when a module with Sip bindings is being imported after PyQt. Due to a clash with the Sip versions or something, it then fails on the custom module. Import all of our custom modules with Sip bindings first.
+
+Author: Ghostkeeper <rubend@tutanota.com>
+Origin: upstream, https://github.com/Ultimaker/Cura/commit/26cb6612409b459aa24206479b7d1f1c98613408
+Reviewed-By: Sergio Durigan Junior <sergiodj@debian.org>
+---
+ tests/conftest.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tests/conftest.py b/tests/conftest.py
+index 876fb4f..cff3f84 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -9,6 +9,7 @@ import pytest
+ # Prevents error: "PyCapsule_GetPointer called with incorrect name" with conflicting SIP configurations between Arcus and PyQt: Import Arcus and Savitar first!
+ import Savitar  # Dont remove this line
+ import Arcus  # No really. Don't. It needs to be there!
++import pynest2d  # Really!
+ from UM.Qt.QtApplication import QtApplication  # QtApplication import is required, even though it isn't used.
+ # Even though your IDE says these files are not used, don't believe it. It's lying. They need to be there.
+ 
