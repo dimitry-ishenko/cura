@@ -1,0 +1,69 @@
+From: Ghostkeeper <rubend@tutanota.com>
+Date: Fri, 16 Oct 2020 14:26:27 +0200
+Subject: More fixes for PyCapsule_GetPointer race condition
+
+One of the weirdest errors out there, and as far as I know we're the only ones suffering from it, due to having multiple packages of Python bindings created with Sip as well as having PyQt and different threads.
+
+Author: Ghostkeeper <rubend@tutanota.com>
+Origin: upstream, https://github.com/Ultimaker/Cura/commit/6abfa388386c7162b431b3d4e29bc1b791602a14
+Reviewed-By: Sergio Durigan Junior <sergiodj@debian.org>
+---
+ plugins/PostProcessingPlugin/__init__.py                       | 1 +
+ plugins/PostProcessingPlugin/tests/TestPostProcessingPlugin.py | 2 +-
+ plugins/XmlMaterialProfile/tests/TestXmlMaterialProfile.py     | 3 ++-
+ tests/conftest.py                                              | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/plugins/PostProcessingPlugin/__init__.py b/plugins/PostProcessingPlugin/__init__.py
+index 6ddecfa..019627e 100644
+--- a/plugins/PostProcessingPlugin/__init__.py
++++ b/plugins/PostProcessingPlugin/__init__.py
+@@ -7,6 +7,7 @@
+ # tries to create PyQt objects on a non-main thread.
+ import Arcus  # @UnusedImport
+ import Savitar  # @UnusedImport
++import pynest2d  # @UnusedImport
+ 
+ from . import PostProcessingPlugin
+ 
+diff --git a/plugins/PostProcessingPlugin/tests/TestPostProcessingPlugin.py b/plugins/PostProcessingPlugin/tests/TestPostProcessingPlugin.py
+index 70fda32..53a6c30 100644
+--- a/plugins/PostProcessingPlugin/tests/TestPostProcessingPlugin.py
++++ b/plugins/PostProcessingPlugin/tests/TestPostProcessingPlugin.py
+@@ -13,7 +13,7 @@ from ..PostProcessingPlugin import PostProcessingPlugin
+ # not sure if needed
+ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+ 
+-""" In this file, commnunity refers to regular Cura for makers."""
++""" In this file, community refers to regular Cura for makers."""
+ 
+ mock_plugin_registry = MagicMock()
+ mock_plugin_registry.getPluginPath = MagicMock(return_value = "mocked_plugin_path")
+diff --git a/plugins/XmlMaterialProfile/tests/TestXmlMaterialProfile.py b/plugins/XmlMaterialProfile/tests/TestXmlMaterialProfile.py
+index ef1587a..651fd5a 100644
+--- a/plugins/XmlMaterialProfile/tests/TestXmlMaterialProfile.py
++++ b/plugins/XmlMaterialProfile/tests/TestXmlMaterialProfile.py
+@@ -1,8 +1,9 @@
+ from unittest.mock import patch, MagicMock
+ 
+-# Prevents error: "PyCapsule_GetPointer called with incorrect name" with conflicting SIP configurations between Arcus and PyQt: Import Arcus and Savitar first!
++# Prevents error: "PyCapsule_GetPointer called with incorrect name" with conflicting SIP configurations between Arcus and PyQt: Import custom Sip bindings first!
+ import Savitar  # Dont remove this line
+ import Arcus  # No really. Don't. It needs to be there!
++import pynest2d  # Really!
+ from UM.Qt.QtApplication import QtApplication  # QtApplication import is required, even though it isn't used.
+ 
+ import pytest
+diff --git a/tests/conftest.py b/tests/conftest.py
+index cff3f84..1b9b1c4 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -6,7 +6,7 @@
+ from unittest.mock import MagicMock, patch
+ import pytest
+ 
+-# Prevents error: "PyCapsule_GetPointer called with incorrect name" with conflicting SIP configurations between Arcus and PyQt: Import Arcus and Savitar first!
++# Prevents error: "PyCapsule_GetPointer called with incorrect name" with conflicting SIP configurations between Arcus and PyQt: Import custom Sip bindings first!
+ import Savitar  # Dont remove this line
+ import Arcus  # No really. Don't. It needs to be there!
+ import pynest2d  # Really!

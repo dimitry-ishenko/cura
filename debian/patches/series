@@ -2,3 +2,5 @@
 1010-desktop-menu-location.patch
 2001-no-default-telemetry.patch
 0000-mypy-test-fix.patch
+0005-Fix-PyCapsule_GetPointer-error-when-running-tests.patch
+0006-More-fixes-for-PyCapsule_GetPointer-race-condition.patch
