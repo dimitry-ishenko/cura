@@ -1,4 +1,4 @@
-cura (4.8-1) UNRELEASED; urgency=medium
+cura (4.8-1) unstable; urgency=medium
 
   [ Gregor Riepl ]
   * Fix for failing mypy unit test. Closes: #973230
@@ -6,14 +6,15 @@ cura (4.8-1) UNRELEASED; urgency=medium
   [ Christoph Berg ]
   * debian/watch: Handle -beta releases.
   * New upstream version 4.8.
-    + Wizard works now. (Closes: #975705)
+    + Wizard works now. (Closes: #975705, #975836)
+  * Bump dependencies on cura-engine, savitar, and uranium to 4.8.
 
   [ Sergio Durigan Junior ]
   * Fix failures during make check due to PyCapsule_GetPointer race.
     - d/p/0005-Fix-PyCapsule_GetPointer-error-when-running-tests.patch
     - d/p/0006-More-fixes-for-PyCapsule_GetPointer-race-condition.patch
 
- -- Sergio Durigan Junior <sergiodj@debian.org>  Sun, 20 Dec 2020 16:23:29 -0500
+ -- Christoph Berg <myon@debian.org>  Sun, 20 Dec 2020 22:31:31 +0100
 
 cura (4.7.1-2) unstable; urgency=medium
 
