@@ -4,3 +4,4 @@
 0000-mypy-test-fix.patch
 0005-Fix-PyCapsule_GetPointer-error-when-running-tests.patch
 0006-More-fixes-for-PyCapsule_GetPointer-race-condition.patch
+1011-disable-code-style-test.patch

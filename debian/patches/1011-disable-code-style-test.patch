@@ -1,0 +1,18 @@
+Index: Cura/cmake/CuraTests.cmake
+===================================================================
+--- Cura.orig/cmake/CuraTests.cmake	2020-12-05 19:33:44.336304152 +0100
++++ Cura/cmake/CuraTests.cmake	2021-02-01 00:05:26.242872714 +0100
+@@ -50,13 +50,6 @@
+ endfunction()
+ 
+ 
+-#Add code style test.
+-add_test(
+-    NAME "code-style"
+-    COMMAND ${Python3_EXECUTABLE} run_mypy.py
+-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+-)
+-
+ #Add test for import statements which are not compatible with all builds
+ add_test(
+     NAME "invalid-imports"
