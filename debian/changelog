@@ -1,3 +1,10 @@
+cura (4.8-2) unstable; urgency=medium
+
+  [ Gregor Riepl ]
+  * Disable code-style unit test. (Works around and closes: #980603)
+
+ -- Christoph Berg <myon@debian.org>  Mon, 01 Feb 2021 17:28:48 +0100
+
 cura (4.8-1) unstable; urgency=medium
 
   [ Gregor Riepl ]
