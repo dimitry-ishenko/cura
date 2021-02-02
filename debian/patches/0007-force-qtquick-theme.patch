@@ -1,0 +1,20 @@
+Author: StefanBruens
+Origin: upstream, https://github.com/Ultimaker/Cura/pull/7139
+
+Index: Cura/cura_app.py
+===================================================================
+--- Cura.orig/cura_app.py	2020-12-05 19:33:44.352304640 +0100
++++ Cura/cura_app.py	2021-02-02 21:12:54.066870300 +0100
+@@ -226,6 +226,12 @@
+     import trimesh.exchange.load
+     os.environ["LD_LIBRARY_PATH"] = old_env
+ 
++# WORKAROUND: Cura#5488
++# When using the KDE qqc2-desktop-style, the UI layout is completely broken, and
++# even worse, it crashes when switching to the "Preview" pane.
++if Platform.isLinux():
++    os.environ["QT_QUICK_CONTROLS_STYLE"] = "default"
++    
+ if ApplicationMetadata.CuraDebugMode:
+     ssl_conf = QSslConfiguration.defaultConfiguration()
+     ssl_conf.setPeerVerifyMode(QSslSocket.VerifyNone)
