@@ -1,3 +1,11 @@
+cura (4.8-3) unstable; urgency=medium
+
+  [ Gregor Riepl ]
+  * Force QT_QUICK_CONTROLS_STYLE=default.
+    (Backport upstream PR #7139, closes: #956811)
+
+ -- Christoph Berg <myon@debian.org>  Tue, 02 Feb 2021 22:12:43 +0100
+
 cura (4.8-2) unstable; urgency=medium
 
   [ Gregor Riepl ]
