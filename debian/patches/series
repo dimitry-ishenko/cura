@@ -6,3 +6,4 @@
 0006-More-fixes-for-PyCapsule_GetPointer-race-condition.patch
 1011-disable-code-style-test.patch
 0007-force-qtquick-theme.patch
+0008-adapt-to-python-3.9-api-changes.patch

@@ -1,3 +1,11 @@
+cura (4.8-4) UNRELEASED; urgency=medium
+
+  [ Gregor Riepl ]
+  * Fix Python 3.9 incompatibility issue (upstream PR #9105,
+    closes #985585)
+
+ -- Gregor Riepl <onitake@gmail.com>  Sat, 20 Mar 2021 14:20:06 +0100
+
 cura (4.8-3) unstable; urgency=medium
 
   [ Gregor Riepl ]
