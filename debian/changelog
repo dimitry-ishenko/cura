@@ -1,6 +1,5 @@
-cura (4.8-4) UNRELEASED; urgency=medium
+cura (4.8-4) unstable; urgency=medium
 
-  [ Gregor Riepl ]
   * Fix Python 3.9 incompatibility issue (upstream PR #9105,
     closes: #985585)
   * Added missing metadata license
