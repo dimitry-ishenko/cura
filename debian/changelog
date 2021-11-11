@@ -1,3 +1,10 @@
+cura (4.8-5) UNRELEASED; urgency=medium
+
+  [ Gregor Riepl ]
+  * Add patch for python3-zeroconf incompatiblity (closes: #999335)
+
+ -- Gregor Riepl <onitake@gmail.com>  Thu, 11 Nov 2021 17:53:20 +0100
+
 cura (4.8-4) unstable; urgency=medium
 
   * Fix Python 3.9 incompatibility issue (upstream PR #9105,
