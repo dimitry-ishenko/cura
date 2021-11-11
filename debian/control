@@ -50,7 +50,7 @@ Depends: cura-engine (>= 1:4.8), cura-engine (<< 1:4.9),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends}
-Recommends: python3-zeroconf
+Recommends: python3-zeroconf (>= 0.28)
 Provides: ${python3:Provides}
 XB-Python3-Version: ${python3:Versions}
 Description: GUI G-code generator for 3D printers
