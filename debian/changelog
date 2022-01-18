@@ -1,3 +1,10 @@
+cura (4.13.0-1) unstable; urgency=medium
+
+  * New upstream version 4.13.0.
+  * Add new dependencies python3-keyring and python3-sentry-sdk.
+
+ -- Christoph Berg <myon@debian.org>  Tue, 18 Jan 2022 12:03:00 +0100
+
 cura (4.8-5) unstable; urgency=medium
 
   * Add patch for python3-zeroconf incompatiblity (closes: #999335)

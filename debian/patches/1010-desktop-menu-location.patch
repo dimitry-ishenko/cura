@@ -6,8 +6,8 @@ Forwarded: no
 Reviewed-By: Petter Reinholdtsen <pere@hungry.com>
 Last-Update: 2017-10-08
 
---- a/cura.desktop.in
-+++ b/cura.desktop.in
+--- a/com.ultimaker.cura.desktop.in
++++ b/com.ultimaker.cura.desktop.in
 @@ -14,6 +14,6 @@ Icon=cura-icon
  Terminal=false
  Type=Application
