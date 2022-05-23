@@ -1,11 +1,19 @@
-Description: Adjust menu location of program
- Add more categories to the desktop file to adjust where
- Cura show up in the GUI menu.
-Author: Petter Reinholdtsen <pere@hungry.com>
+From: Petter Reinholdtsen <pere@hungry.com>
+Date: Mon, 23 May 2022 08:49:20 -0600
+Subject: Adjust menu location of program
+
 Forwarded: no
 Reviewed-By: Petter Reinholdtsen <pere@hungry.com>
 Last-Update: 2017-10-08
 
+Add more categories to the desktop file to adjust where
+Cura show up in the GUI menu.
+---
+ com.ultimaker.cura.desktop.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/com.ultimaker.cura.desktop.in b/com.ultimaker.cura.desktop.in
+index 1e17e30..bdd91c0 100644
 --- a/com.ultimaker.cura.desktop.in
 +++ b/com.ultimaker.cura.desktop.in
 @@ -14,6 +14,6 @@ Icon=cura-icon

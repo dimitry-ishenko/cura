@@ -1,18 +1,25 @@
-Author: Gregor Riepl <onitake@gmail.com>
-Description: Fonts should be packaged separately.
-  This patch excludes the installation of Open Sans,
-  so a system version is picked up instead.
-  A dependency on fonts-open-sans was added to debian/control.
-Index: Cura/CMakeLists.txt
+From: Gregor Riepl <onitake@gmail.com>
+Date: Mon, 23 May 2022 08:49:20 -0600
+Subject: Fonts should be packaged separately.
+
+ This patch excludes the installation of Open Sans,
+ so a system version is picked up instead.
+ A dependency on fonts-open-sans was added to debian/control.
 ===================================================================
---- Cura.orig/CMakeLists.txt	2020-12-05 19:21:48.460036936 +0100
-+++ Cura/CMakeLists.txt	2020-12-05 19:21:48.460036936 +0100
-@@ -60,7 +60,8 @@
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f61737f..c8d6b03 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -66,7 +66,8 @@ if(NOT ${URANIUM_SCRIPTS_DIR} STREQUAL "")
+     endif()
+ endif()
  
- 
- install(DIRECTORY resources
--        DESTINATION ${CMAKE_INSTALL_DATADIR}/cura)
-+        DESTINATION ${CMAKE_INSTALL_DATADIR}/cura
+-install(DIRECTORY resources DESTINATION ${CMAKE_INSTALL_DATADIR}/cura)
++install(DIRECTORY resources DESTINATION ${CMAKE_INSTALL_DATADIR}/cura
 +        PATTERN resources/themes/cura-light/fonts EXCLUDE)
  
  include(CuraPluginInstall)

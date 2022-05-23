@@ -1,8 +1,19 @@
-Index: Cura/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
+From: Debian 3-D Printing Packages
+ <3dprinter-general@lists.alioth.debian.org>
+Date: Mon, 23 May 2022 08:49:20 -0600
+Subject: no-default-telemetry
+
 ===================================================================
---- Cura.orig/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py	2020-12-05 19:21:55.076201826 +0100
-+++ Cura/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py	2020-12-05 19:21:55.072201725 +0100
-@@ -30,7 +30,7 @@
+---
+ plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py | 2 +-
+ plugins/SliceInfoPlugin/SliceInfo.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py b/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
+index e7b1aef..00cf1fc 100644
+--- a/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
++++ b/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
+@@ -30,7 +30,7 @@ class FirmwareUpdateChecker(Extension):
  
          # Listen to a Signal that indicates a change in the list of printers, just if the user has enabled the
          # "check for updates" option
@@ -11,11 +22,11 @@ Index: Cura/plugins/FirmwareUpdateChecker/FirmwareUpdateChecker.py
          if Application.getInstance().getPreferences().getValue("info/automatic_update_check"):
              ContainerRegistry.getInstance().containerAdded.connect(self._onContainerAdded)
  
-Index: Cura/plugins/SliceInfoPlugin/SliceInfo.py
-===================================================================
---- Cura.orig/plugins/SliceInfoPlugin/SliceInfo.py	2020-12-05 19:21:55.076201826 +0100
-+++ Cura/plugins/SliceInfoPlugin/SliceInfo.py	2020-12-05 19:21:55.072201725 +0100
-@@ -43,7 +43,7 @@
+diff --git a/plugins/SliceInfoPlugin/SliceInfo.py b/plugins/SliceInfoPlugin/SliceInfo.py
+index 0bf76f8..6e92b0d 100755
+--- a/plugins/SliceInfoPlugin/SliceInfo.py
++++ b/plugins/SliceInfoPlugin/SliceInfo.py
+@@ -43,7 +43,7 @@ class SliceInfo(QObject, Extension):
          self._application = CuraApplication.getInstance()
  
          self._application.getOutputDeviceManager().writeStarted.connect(self._onWriteStarted)

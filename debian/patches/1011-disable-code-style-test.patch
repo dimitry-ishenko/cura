@@ -1,15 +1,26 @@
-Index: Cura/cmake/CuraTests.cmake
+From: Debian 3-D Printing Packages
+ <3dprinter-general@lists.alioth.debian.org>
+Date: Mon, 23 May 2022 08:49:20 -0600
+Subject: disable-code-style-test
+
 ===================================================================
---- Cura.orig/cmake/CuraTests.cmake	2020-12-05 19:33:44.336304152 +0100
-+++ Cura/cmake/CuraTests.cmake	2021-02-01 00:05:26.242872714 +0100
-@@ -50,13 +50,6 @@
+---
+ cmake/CuraTests.cmake | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/cmake/CuraTests.cmake b/cmake/CuraTests.cmake
+index 09e8dad..766c6c4 100644
+--- a/cmake/CuraTests.cmake
++++ b/cmake/CuraTests.cmake
+@@ -43,14 +43,6 @@ function(cura_add_test)
+     endif()
  endfunction()
  
- 
+-
 -#Add code style test.
 -add_test(
 -    NAME "code-style"
--    COMMAND ${Python3_EXECUTABLE} run_mypy.py
+-    COMMAND ${Python_EXECUTABLE} run_mypy.py
 -    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 -)
 -
