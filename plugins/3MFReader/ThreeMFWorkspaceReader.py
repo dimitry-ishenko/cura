@@ -34,7 +34,7 @@ from cura.Settings.CuraContainerStack import _ContainerIndexes
 from cura.CuraApplication import CuraApplication
 from cura.Utils.Threading import call_on_qt_thread
 
-from PyQt5.QtCore import QCoreApplication
+from PyQt6.QtCore import QCoreApplication
 
 from .WorkspaceDialog import WorkspaceDialog
 
@@ -379,7 +379,9 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         #  - the global stack DOESN'T exist but some/all of the extruder stacks exist
         # To simplify this, only check if the global stack exists or not
         global_stack_id = self._stripFileToId(global_stack_file)
+
         serialized = archive.open(global_stack_file).read().decode("utf-8")
+
         serialized = GlobalStack._updateSerialized(serialized, global_stack_file)
         machine_name = self._getMachineNameFromSerializedStack(serialized)
         self._machine_info.metadata_dict = self._getMetaDataDictFromSerializedStack(serialized)
