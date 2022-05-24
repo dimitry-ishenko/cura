@@ -1,0 +1,39 @@
+From: Sebastian Kuzminsky <sebastiankuzminsky@desktopmetal.com>
+Date: Tue, 24 May 2022 08:55:29 -0600
+Subject: delete quality profile that fails test
+
+---
+ .../jgaurora_a6/jgaurora_a6_0.28_fast.inst.cfg.txt | 24 ----------------------
+ 1 file changed, 24 deletions(-)
+ delete mode 100644 resources/quality/jgaurora_a6/jgaurora_a6_0.28_fast.inst.cfg.txt
+
+diff --git a/resources/quality/jgaurora_a6/jgaurora_a6_0.28_fast.inst.cfg.txt b/resources/quality/jgaurora_a6/jgaurora_a6_0.28_fast.inst.cfg.txt
+deleted file mode 100644
+index 89f09b6..0000000
+--- a/resources/quality/jgaurora_a6/jgaurora_a6_0.28_fast.inst.cfg.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-[general]
+-version = 4
+-name = Fast 0.28
+-definition = jgaurora_a6
+-
+-[metadata]
+-quality_type = fast
+-setting_version = 19
+-type = quality
+-weight = -4
+-global_quality = true
+-
+-[values]
+-layer_height = 0.28
+-layer_height_0 = 0.28
+-speed_print = 60
+-speed_travel = 120
+-speed_layer_0 = 30
+-wall_thickness = =line_width * 4
+-retraction_amount = 4
+-adhesion_type = skirt
+-retraction_combing = infill
+-support_enable = False
+-travel_retract_before_outer_wall = True

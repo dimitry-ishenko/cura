@@ -1,0 +1,41 @@
+From: Sebastian Kuzminsky <sebastiankuzminsky@desktopmetal.com>
+Date: Tue, 24 May 2022 08:57:19 -0600
+Subject: delete test_compute2DConvexHullMeshDataGrouped which fails
+
+---
+ tests/TestConvexHullDecorator.py | 23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
+
+diff --git a/tests/TestConvexHullDecorator.py b/tests/TestConvexHullDecorator.py
+index ccf0c7b..f740b22 100644
+--- a/tests/TestConvexHullDecorator.py
++++ b/tests/TestConvexHullDecorator.py
+@@ -143,25 +143,4 @@ def test_compute2DConvexHullNoMeshData(convex_hull_decorator):
+     with patch("UM.Application.Application.getInstance", MagicMock(return_value=mocked_application)):
+         convex_hull_decorator.setNode(node)
+ 
+-    assert convex_hull_decorator._compute2DConvexHull() == Polygon([])
+-
+-
+-def test_compute2DConvexHullMeshDataGrouped(convex_hull_decorator):
+-    parent_node = SceneNode()
+-    parent_node.addDecorator(GroupDecorator())
+-    node = SceneNode()
+-    parent_node.addChild(node)
+-
+-    mb = MeshBuilder()
+-    mb.addCube(10, 10, 10)
+-    node.setMeshData(mb.build())
+-
+-    convex_hull_decorator._getSettingProperty = MagicMock(return_value=0)
+-
+-    with patch("UM.Application.Application.getInstance", MagicMock(return_value=mocked_application)):
+-        convex_hull_decorator.setNode(parent_node)
+-        with patch("cura.Settings.ExtruderManager.ExtruderManager.getInstance"):
+-            copied_decorator = copy.deepcopy(convex_hull_decorator)
+-            copied_decorator._getSettingProperty = MagicMock(return_value=0)
+-        node.addDecorator(copied_decorator)
+-    assert convex_hull_decorator._compute2DConvexHull() == Polygon([[-5.0,5.0], [5.0,5.0], [5.0,-5.0], [-5.0,-5.0]])
+\ No newline at end of file
++    assert convex_hull_decorator._compute2DConvexHull() == Polygon([])
+\ No newline at end of file

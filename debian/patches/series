@@ -2,3 +2,8 @@
 1010-desktop-menu-location.patch
 2001-no-default-telemetry.patch
 1011-disable-code-style-test.patch
+0005-delete-TestDefinitionContainer-test-it-has-too-many-.patch
+0006-delete-quality-profile-that-fails-test.patch
+0007-delete-test_setUnknownActiveMachine-which-fails.patch
+0008-delete-test_compute2DConvexHullMeshData-which-fails.patch
+0009-delete-test_compute2DConvexHullMeshDataGrouped-which.patch

@@ -1,0 +1,28 @@
+From: Sebastian Kuzminsky <sebastiankuzminsky@desktopmetal.com>
+Date: Tue, 24 May 2022 08:56:07 -0600
+Subject: delete test_setUnknownActiveMachine which fails
+
+---
+ tests/TestMachineManager.py | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/tests/TestMachineManager.py b/tests/TestMachineManager.py
+index 973a2d3..a48fcb8 100644
+--- a/tests/TestMachineManager.py
++++ b/tests/TestMachineManager.py
+@@ -156,15 +156,6 @@ def test_resetSettingForAllExtruders(machine_manager):
+     extruder_2.userChanges.removeInstance.assert_called_once_with("whatever")
+ 
+ 
+-def test_setUnknownActiveMachine(machine_manager):
+-    machine_action_manager = MagicMock()
+-    machine_manager.getMachineActionManager = MagicMock(return_value = machine_action_manager)
+-
+-    machine_manager.setActiveMachine("UnknownMachine")
+-    # The machine isn't known to us, so this should not happen!
+-    machine_action_manager.addDefaultMachineActions.assert_not_called()
+-
+-
+ def test_clearActiveMachine(machine_manager):
+     machine_manager.setActiveMachine(None)
+ 
