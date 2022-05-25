@@ -53,7 +53,7 @@ Depends: cura-engine (>= 1:5.0), cura-engine (<< 1:5.1),
          qml-module-qtquick-controls2,
          qml-module-qtquick-dialogs,
          uranium-plugins (>= 5.0),
-         fdm-materials,
+         fdm-materials (>= 5.0),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends}
