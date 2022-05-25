@@ -1,8 +1,16 @@
 cura (5.0.0-1) UNRELEASED; urgency=medium
 
-  * New upstream version 5.0.0
+  [ Sebastian Kuzminsky ]
+  * New upstream version 5.0.0.
+  * Refresh patches.
+  * Bump runtime dependencies from qt5 to qt6.
+  * Bump versioned dependencies on Ultimaker packages.
+  * Add build dependencies needed for tests.
+  * Bump build dependency versions for the tests.
+  * pq: add patches to delete failing tests.
+  * Don't depend on python3-pyqt6.qtopengl, that's in python3-pyqt6 now.
 
- -- Sebastian Kuzminsky <seb@highlab.com>  Mon, 23 May 2022 08:20:36 -0600
+ -- Sebastian Kuzminsky <seb@highlab.com>  Wed, 25 May 2022 15:32:46 -0600
 
 cura (4.13.0-1) unstable; urgency=medium
 
