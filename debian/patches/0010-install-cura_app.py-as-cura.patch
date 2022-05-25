@@ -1,0 +1,20 @@
+From: Sebastian Kuzminsky <sebastiankuzminsky@desktopmetal.com>
+Date: Wed, 25 May 2022 17:41:48 -0600
+Subject: install cura_app.py as cura
+
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c8d6b03..ea50fa2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -72,6 +72,7 @@ install(DIRECTORY resources DESTINATION ${CMAKE_INSTALL_DATADIR}/cura
+ include(CuraPluginInstall)
+ 
+ install(FILES cura_app.py DESTINATION ${CMAKE_INSTALL_BINDIR}
++        RENAME cura
+         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+ install(DIRECTORY cura DESTINATION "${Python_SITELIB_LOCAL}")
+ install(FILES ${CMAKE_BINARY_DIR}/CuraVersion.py DESTINATION "${Python_SITELIB_LOCAL}/cura/")

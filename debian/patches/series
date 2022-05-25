@@ -7,3 +7,4 @@
 0007-delete-test_setUnknownActiveMachine-which-fails.patch
 0008-delete-test_compute2DConvexHullMeshData-which-fails.patch
 0009-delete-test_compute2DConvexHullMeshDataGrouped-which.patch
+0010-install-cura_app.py-as-cura.patch
