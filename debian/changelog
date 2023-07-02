@@ -1,3 +1,9 @@
+cura (5.0.0-2) unstable; urgency=medium
+
+  * Depend on python3-charon (>= 5.0).
+
+ -- Christoph Berg <myon@debian.org>  Sun, 02 Jul 2023 19:59:57 +0000
+
 cura (5.0.0-1) experimental; urgency=medium
 
   [ Sebastian Kuzminsky ]

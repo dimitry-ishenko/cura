@@ -35,7 +35,7 @@ Architecture: all
 Depends: cura-engine (>= 1:5.0), cura-engine (<< 1:5.1),
          fonts-open-sans,
          python3-certifi,
-         python3-charon,
+         python3-charon (>= 5.0),
          python3-cryptography,
          python3-keyring,
          python3-pyqt6,
