@@ -1,3 +1,9 @@
+cura (5.0.0-3) unstable; urgency=medium
+
+  * Get Python3 version to compile against from py3versions -vd.
+
+ -- Christoph Berg <myon@debian.org>  Mon, 03 Jul 2023 19:15:05 +0000
+
 cura (5.0.0-2) unstable; urgency=medium
 
   * Depend on python3-charon (>= 5.0).
