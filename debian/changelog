@@ -1,3 +1,9 @@
+cura (5.0.0-4) UNRELEASED; urgency=medium
+
+  * Remove dependency on Sentry SDK and Crash Logger plugin
+
+ -- Gregor Riepl <onitake@gmail.com>  Sun, 30 Jul 2023 16:19:14 +0200
+
 cura (5.0.0-3) unstable; urgency=medium
 
   * Get Python3 version to compile against from py3versions -vd.

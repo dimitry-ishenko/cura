@@ -1,0 +1,202 @@
+From 8f7dbecadc5d16c82f394e9a9592ce0b4a1d1128 Mon Sep 17 00:00:00 2001
+From: Gregor Riepl <onitake@gmail.com>
+Date: Sun, 30 Jul 2023 16:17:00 +0200
+Subject: [PATCH] Remove SentryLogger plugin and Sentry SDK dependency
+
+---
+ cura/CrashHandler.py                 |  8 +----
+ cura/CuraApplication.py              |  3 --
+ cura_app.py                          |  6 +---
+ plugins/SentryLogger/SentryLogger.py | 54 ----------------------------
+ plugins/SentryLogger/__init__.py     | 23 ------------
+ plugins/SentryLogger/plugin.json     |  8 -----
+ resources/bundled_packages/cura.json | 17 ---------
+ 7 files changed, 2 insertions(+), 117 deletions(-)
+ delete mode 100644 plugins/SentryLogger/SentryLogger.py
+ delete mode 100644 plugins/SentryLogger/__init__.py
+ delete mode 100644 plugins/SentryLogger/plugin.json
+
+diff --git a/cura/CrashHandler.py b/cura/CrashHandler.py
+index bda9568666..94b3c7b934 100644
+--- a/cura/CrashHandler.py
++++ b/cura/CrashHandler.py
+@@ -12,13 +12,7 @@ import json
+ import locale
+ from typing import cast, Any
+ 
+-try:
+-    from sentry_sdk.hub import Hub
+-    from sentry_sdk.utils import event_from_exception
+-    from sentry_sdk import configure_scope, add_breadcrumb
+-    with_sentry_sdk = True
+-except ImportError:
+-    with_sentry_sdk = False
++with_sentry_sdk = False
+ 
+ from PyQt6.QtCore import QT_VERSION_STR, PYQT_VERSION_STR, QUrl
+ from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QVBoxLayout, QLabel, QTextEdit, QGroupBox, QCheckBox, QPushButton
+diff --git a/cura/CuraApplication.py b/cura/CuraApplication.py
+index ee3c6e361e..d725b6231d 100755
+--- a/cura/CuraApplication.py
++++ b/cura/CuraApplication.py
+@@ -787,9 +787,6 @@ class CuraApplication(QtApplication):
+             self._plugin_registry.addPluginLocation(os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "plugins"))
+             self._plugin_registry.preloaded_plugins.append("ConsoleLogger")
+ 
+-        # Since it's possible to get crashes in code before the sentrylogger is loaded, we want to start this plugin
+-        # as quickly as possible, as we might get unsolvable crash reports without it.
+-        self._plugin_registry.preloaded_plugins.append("SentryLogger")
+         self._plugin_registry.loadPlugins()
+ 
+         if self.getBackend() is None:
+diff --git a/cura_app.py b/cura_app.py
+index e11e3c4232..54d8d78316 100755
+--- a/cura_app.py
++++ b/cura_app.py
+@@ -26,11 +26,7 @@ from cura import ApplicationMetadata
+ from cura.ApplicationMetadata import CuraAppName
+ from cura.CrashHandler import CrashHandler
+ 
+-try:
+-    import sentry_sdk
+-    with_sentry_sdk = True
+-except ImportError:
+-    with_sentry_sdk = False
++with_sentry_sdk = False
+ 
+ parser = argparse.ArgumentParser(prog = "cura",
+                                  add_help = False)
+diff --git a/plugins/SentryLogger/SentryLogger.py b/plugins/SentryLogger/SentryLogger.py
+deleted file mode 100644
+index 0a65e1e00a..0000000000
+--- a/plugins/SentryLogger/SentryLogger.py
++++ /dev/null
+@@ -1,54 +0,0 @@
+-# Copyright (c) 2019 Ultimaker B.V.
+-# Cura is released under the terms of the LGPLv3 or higher.
+-
+-from UM.Logger import LogOutput
+-from typing import Set
+-
+-from cura.CrashHandler import CrashHandler
+-
+-try:
+-    from sentry_sdk import add_breadcrumb
+-except ImportError:
+-    pass
+-from typing import Optional
+-
+-
+-class SentryLogger(LogOutput):
+-    # Sentry (https://sentry.io) is the service that Cura uses for logging crashes. This logger ensures that the
+-    # regular log entries that we create are added as breadcrumbs so when a crash actually happens, they are already
+-    # processed and ready for sending.
+-    # Note that this only prepares them for sending. It only sends them when the user actually agrees to sending the
+-    # information.
+-
+-    _levels = {
+-        "w": "warning",
+-        "i": "info",
+-        "c": "fatal",
+-        "e": "error",
+-        "d": "debug"
+-    }
+-
+-    def __init__(self) -> None:
+-        super().__init__()
+-        self._show_once = set()  # type: Set[str]
+-
+-    def log(self, log_type: str, message: str) -> None:
+-        """Log the message to the sentry hub as a breadcrumb
+-
+-        :param log_type: "e" (error), "i"(info), "d"(debug), "w"(warning) or "c"(critical) (can postfix with "_once")
+-        :param message: String containing message to be logged
+-        """
+-        level = self._translateLogType(log_type)
+-        message = CrashHandler.pruneSensitiveData(message)
+-        if level is None:
+-            if message not in self._show_once:
+-                level = self._translateLogType(log_type[0])
+-                if level is not None:
+-                    self._show_once.add(message)
+-                    add_breadcrumb(level = level, message = message)
+-        else:
+-            add_breadcrumb(level = level, message = message)
+-
+-    @staticmethod
+-    def _translateLogType(log_type: str) -> Optional[str]:
+-        return SentryLogger._levels.get(log_type)
+diff --git a/plugins/SentryLogger/__init__.py b/plugins/SentryLogger/__init__.py
+deleted file mode 100644
+index 1b6b4bf7f8..0000000000
+--- a/plugins/SentryLogger/__init__.py
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Copyright (c) 2019 Ultimaker B.V.
+-# Cura is released under the terms of the LGPLv3 or higher.
+-from typing import TYPE_CHECKING, Dict, Any
+-try:
+-    import sentry_sdk
+-    has_sentry = True
+-except ImportError:
+-    has_sentry = False
+-
+-from . import SentryLogger
+-
+-if TYPE_CHECKING:
+-    from UM.Application import Application
+-
+-
+-def getMetaData() -> Dict[str, Any]:
+-    return {}
+-
+-
+-def register(app: "Application") -> Dict[str, Any]:
+-    if not has_sentry:
+-        return {}  # Nothing to do here!
+-    return {"logger": SentryLogger.SentryLogger()}
+diff --git a/plugins/SentryLogger/plugin.json b/plugins/SentryLogger/plugin.json
+deleted file mode 100644
+index 2a55de2963..0000000000
+--- a/plugins/SentryLogger/plugin.json
++++ /dev/null
+@@ -1,8 +0,0 @@
+-{
+-    "name": "Sentry Logger",
+-    "author": "Ultimaker B.V.",
+-    "version": "1.0.0",
+-    "description": "Logs certain events so that they can be used by the crash reporter",
+-    "api": 8,
+-    "i18n-catalog": "cura"
+-}
+diff --git a/resources/bundled_packages/cura.json b/resources/bundled_packages/cura.json
+index 6ec6d5a7b9..1ffb1451e5 100644
+--- a/resources/bundled_packages/cura.json
++++ b/resources/bundled_packages/cura.json
+@@ -424,23 +424,6 @@
+             }
+         }
+     },
+-    "SentryLogger": {
+-        "package_info": {
+-            "package_id": "SentryLogger",
+-            "package_type": "plugin",
+-            "display_name": "Sentry Logger",
+-            "description": "Logs certain events so that they can be used by the crash reporter",
+-            "package_version": "1.0.0",
+-            "sdk_version": "8.0.0",
+-            "website": "https://ultimaker.com",
+-            "author": {
+-                "author_id": "UltimakerPackages",
+-                "display_name": "Ultimaker B.V.",
+-                "email": "plugins@ultimaker.com",
+-                "website": "https://ultimaker.com"
+-            }
+-        }
+-    },
+     "SimulationView": {
+         "package_info": {
+             "package_id": "SimulationView",
+-- 
+2.40.1
+
