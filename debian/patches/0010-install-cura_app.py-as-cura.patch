@@ -1,6 +1,8 @@
 From: Sebastian Kuzminsky <sebastiankuzminsky@desktopmetal.com>
 Date: Wed, 25 May 2022 17:41:48 -0600
 Subject: install cura_app.py as cura
+Forwarded: not-needed
+Last-Update: 2024-04-28
 
 ---
  CMakeLists.txt | 1 +

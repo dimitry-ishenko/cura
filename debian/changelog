@@ -1,3 +1,9 @@
+cura (5.0.0-4) UNRELEASED; urgency=medium
+
+  * Add forwarded information to patches
+
+ -- Gregor Riepl <onitake@gmail.com>  Sun, 28 Apr 2024 11:10:06 +0200
+
 cura (5.0.0-3) unstable; urgency=medium
 
   * Get Python3 version to compile against from py3versions -vd.
