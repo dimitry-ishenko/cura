@@ -8,7 +8,7 @@ Copyright:
  Copyright (c) 2013 David Braam
 License: LGPL-3+
 
-Files: cura.appdata.xml
+Files: com.ultimaker.cura.appdata.xml
 Copyright: Copyright 2016 Richard Hughes <richard@hughsie.com>
 License: CC0-1.0
 
