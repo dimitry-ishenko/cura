@@ -1,0 +1,4 @@
+usr/bin/cura
+usr/lib/cura/*
+usr/lib/python3/*
+usr/share/*

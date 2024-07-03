@@ -1,8 +1,10 @@
 cura (5.0.0-4) UNRELEASED; urgency=medium
 
   * Add forwarded information to patches
+  * Split off plugins that depend on python3-trimesh
+    Closes: #950919
 
- -- Gregor Riepl <onitake@gmail.com>  Sun, 28 Apr 2024 11:10:06 +0200
+ -- Gregor Riepl <onitake@gmail.com>  Wed, 03 Jul 2024 08:25:52 +0200
 
 cura (5.0.0-3) unstable; urgency=medium
 

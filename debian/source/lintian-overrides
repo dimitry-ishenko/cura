@@ -1,0 +1,4 @@
+# this is a false positive - we're actually making use of dh-exec's ability to split files
+# between different packages without naming every file explicitly here
+# would be nice if dh_install had support for excluding files based on a pattern instead
+cura source: dh-exec-script-without-dh-exec-features [debian/cura-plugins-trimesh.install]

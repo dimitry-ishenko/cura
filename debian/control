@@ -6,9 +6,10 @@ Uploaders: Gregor Riepl <onitake@gmail.com>,
 Build-Depends: cmake (>= 2.8.12),
                debhelper-compat (= 12),
                dh-python,
+               dh-exec,
                gettext,
                mypy,
-               python3-all-dev,
+               python3,
                python3-arcus (>= 5.0),
                python3-certifi,
                python3-cryptography,
@@ -29,6 +30,28 @@ Section: misc
 Homepage: https://github.com/Ultimaker/Cura
 Vcs-Browser: https://salsa.debian.org/3dprinting-team/cura
 Vcs-Git: https://salsa.debian.org/3dprinting-team/cura.git
+
+# this package needs to be specified first, so dh_exec can move its files away
+Package: cura-plugins-trimesh
+Architecture: all
+Depends: cura (= ${binary:Version}),
+         python3-trimesh,
+         ${misc:Depends},
+         ${python3:Depends},
+         ${shlibs:Depends}
+Provides: ${python3:Provides}
+XB-Python3-Version: ${python3:Versions}
+Description: GUI G-code generator for 3D printers (extra plugins)
+ Cura converts digital 3D models (.stl and other formats) into printing
+ instructions (G-code) for your 3D printer. It cuts the model into horizontal
+ slices (layers), generates toolpaths to fill them and calculates the amount of
+ material to be extruded.
+ .
+ Cura is easy to use for novices and provides over 200 settings to adjust
+ for the expert.  It can output G-Code for several series of 3D printers,
+ most notably the Ultimaker.
+ .
+ This package contains two extra import plugins, AMFReader and TrimeshReader.
 
 Package: cura
 Architecture: all
@@ -59,7 +82,8 @@ Depends: cura-engine (>= 1:5.0), cura-engine (<< 1:5.1),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends}
-Recommends: python3-zeroconf (>= 0.28)
+Recommends: python3-zeroconf (>= 0.28),
+            cura-plugins-trimesh (= ${binary:Version})
 Provides: ${python3:Provides}
 XB-Python3-Version: ${python3:Versions}
 Description: GUI G-code generator for 3D printers
