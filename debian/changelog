@@ -1,4 +1,4 @@
-cura (5.0.0-5) UNRELEASED; urgency=medium
+cura (5.0.0-4) UNRELEASED; urgency=medium
 
   * Add forwarded information to patches
   * Split off plugins that depend on python3-trimesh
