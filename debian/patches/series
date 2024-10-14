@@ -9,3 +9,4 @@
 0009-delete-test_compute2DConvexHullMeshDataGrouped-which.patch
 0010-install-cura_app.py-as-cura.patch
 0011-Fix-asserts-for-called-once-in-Python-3-12.patch
+0001-Avoid-KeyError-material_name-crash-in-Fedora.patch

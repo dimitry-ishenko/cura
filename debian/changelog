@@ -1,12 +1,14 @@
-cura (5.0.0-4) UNRELEASED; urgency=medium
+cura (5.0.0-5) UNRELEASED; urgency=medium
 
   * Add forwarded information to patches
   * Split off plugins that depend on python3-trimesh
     Closes: #950919
   * Fix unit test assert errors with Python 3.12
-    Closed: #1076871
+    Closes: #1076871
+  * Fix "KeyError: material_name"
+    Closes: #1085090
 
- -- Gregor Riepl <onitake@gmail.com>  Sun, 28 Jul 2024 12:37:23 +0200
+ -- Gregor Riepl <onitake@gmail.com>  Tue, 15 Oct 2024 01:52:38 +0200
 
 cura (5.0.0-3) unstable; urgency=medium
 
