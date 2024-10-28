@@ -69,6 +69,7 @@ Depends: cura-engine (>= 1:5.0), cura-engine (<< 1:5.1),
          python3-shapely,
          python3-pynest2d (>= 5.0),
          python3-uranium (>= 5.0),
+         python3-zeroconf (>= 0.28),
          qml6-module-qtquick-controls,
          qml6-module-qtquick-dialogs,
          qml6-module-qtquick-layouts,
@@ -82,8 +83,7 @@ Depends: cura-engine (>= 1:5.0), cura-engine (<< 1:5.1),
          ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends}
-Recommends: python3-zeroconf (>= 0.28),
-            cura-plugins-trimesh (= ${binary:Version})
+Recommends: cura-plugins-trimesh (= ${binary:Version})
 Provides: ${python3:Provides}
 XB-Python3-Version: ${python3:Versions}
 Description: GUI G-code generator for 3D printers
